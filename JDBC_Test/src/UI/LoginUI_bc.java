@@ -18,6 +18,7 @@ public class LoginUI_bc extends JApplet implements ActionListener{
 	//¹B¥Îsql
 	private LoginKernel database;   
 	//testing123
+	//123456789
 	
 	public void init(){
 		database=new LoginKernel();
