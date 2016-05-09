@@ -22,6 +22,8 @@ public class LoginUI {
 	public LoginUI() {
 		kernel= new LoginKernel();
 		initialize();
+		
+		//fgfgfg
 	}
 
 	/**
