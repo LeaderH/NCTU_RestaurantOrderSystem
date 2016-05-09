@@ -16,7 +16,8 @@ public class LoginUI_bc extends JApplet implements ActionListener{
 	private JButton retry_btn;
 	private JButton logout_btn;
 	//¹B¥Îsql
-	private LoginKernel database;
+	private LoginKernel database;   
+	//gdfdgf
 	
 	public void init(){
 		database=new LoginKernel();
