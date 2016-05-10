@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
-import Kernel.Constants;
 import Kernel.ShopInfoKernel;
 import Kernel.ShopInfoKernel.Item;
 
@@ -16,7 +15,7 @@ public class ShopInfoUI {
 	private JFrame frame;
 	private JTextField txtf_name;
 	private JTextField txtf_loc;
-	private JList	list_item;
+	private JList<String>	list_item;
 
 	
 	/**
@@ -97,7 +96,7 @@ public class ShopInfoUI {
 		panel_item.setLayout(new BorderLayout(0, 0));
 		
 		
-		list_item=new JList();
+		list_item=new JList<String>();
 		panel_item.add(new JScrollPane(list_item),BorderLayout.CENTER);
 		
 		JPanel panel_btns = new JPanel();

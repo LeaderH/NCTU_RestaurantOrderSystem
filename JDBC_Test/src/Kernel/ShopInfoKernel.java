@@ -49,7 +49,7 @@ public class ShopInfoKernel extends MySQL{
 	}
 	
 	private void FetchItemList(){
-		String selectSQL = "SELECT i_id,fullname,value,description FROM item "+
+		String selectSQL = "SELECT i_id,fullname,value,description,available FROM item "+
 				"WHERE s_id='"+sid+"'";
 		ArrayList<Item> L=new ArrayList<Item>();
 		try {
@@ -61,7 +61,8 @@ public class ShopInfoKernel extends MySQL{
 						sid,
 						rs.getString("fullname"),
 						rs.getInt("value"),
-						rs.getString("description")
+						rs.getString("description"),
+						rs.getBoolean("available")
 						);
 				L.add(I);
 			}
@@ -105,6 +106,7 @@ public class ShopInfoKernel extends MySQL{
 		private String fullname;
 		private int value;
 		private String description;
+		private boolean available;
 		
 		private void varinit(){
 			i_id=-1;
@@ -113,15 +115,19 @@ public class ShopInfoKernel extends MySQL{
 			fullname=null;
 			description=null;
 		}
-		Item(int iid,int sid,String name,int v,String des){
+		Item(int iid,int sid,String name,int v,String des,boolean available){
 			i_id=iid;
 			s_id=sid;
 			value=v;
 			fullname=name;
 			description=des;
+			this.available=available;
 		}
 		Item(){
 			varinit();
+		}
+		public boolean isAvailable() {
+			return available;
 		}
 		public int getI_id() {
 			return i_id;
