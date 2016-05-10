@@ -37,7 +37,7 @@ public class GuestInfoKernel extends MySQL{
 	public boolean GetInfo(int uid) {
 		boolean success=true;
 		String selectSQL = "SELECT g_id,fullname,studentid,dept,gender FROM guest "+
-				"WHERE uid='"+uid+"'";;
+				"WHERE uid='"+uid+"'";
 		try {
 			stat = con.createStatement();
 			rs = stat.executeQuery(selectSQL);
