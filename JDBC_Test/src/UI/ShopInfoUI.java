@@ -8,33 +8,38 @@ import java.util.*;
 
 import Kernel.ShopInfoKernel;
 import Kernel.ShopInfoKernel.Item;
+import javax.swing.border.CompoundBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class ShopInfoUI {
-
+	private int uid;
 	private ShopInfoKernel kernel;
 	private JFrame frame;
 	private JTextField txtf_name;
 	private JTextField txtf_loc;
 	private JList<String>	list_item;
-
+	//private JPanel panel_display;
 	
 	/**
 	 * Create the application.
 	 */
 	public ShopInfoUI(int uid) {
+		this.uid=uid;
 		kernel=new ShopInfoKernel();
 		initialize();
-		kernel.GetInfo(uid);
 		update();
 	}
 	
 	private void update(){
+		kernel.GetInfo(uid); //refresh
 		txtf_name.setText(kernel.getFullname());
 		txtf_loc.setText(kernel.getLocation());
 		Item[] List=kernel.getItemList();
 		ArrayList<String> arr=new ArrayList<String>();
 		for(Item I : List){
-			arr.add(String.format("%s(%d)", I.getFullname(),I.getValue()));
+			if(I.isAvailable())
+				arr.add(String.format("%s(%d)", I.getFullname(),I.getValue()));
 		}
 		list_item.setListData(arr.toArray(new String[1]));
 		
@@ -61,7 +66,7 @@ public class ShopInfoUI {
 		panel_info.setLayout(new BorderLayout(0, 0));
 		
 		JLabel lblInfo = new JLabel("Info");
-		lblInfo.setFont(new Font("·s²Ó©úÅé", Font.PLAIN, 20));
+		lblInfo.setFont(new Font("Calibri", Font.PLAIN, 20));
 		lblInfo.setHorizontalAlignment(SwingConstants.CENTER);
 		panel_info.add(lblInfo, BorderLayout.NORTH);
 		
@@ -97,20 +102,43 @@ public class ShopInfoUI {
 		
 		
 		list_item=new JList<String>();
+		list_item.setBorder(new CompoundBorder(new CompoundBorder(), null));
 		panel_item.add(new JScrollPane(list_item),BorderLayout.CENTER);
 		
 		JPanel panel_btns = new JPanel();
 		panel_detail.add(panel_btns);
 		
+
+		JPanel panel_display = new JPanel();
+		panel_main.add(panel_display);
+		
 		JButton btn_itemdetail = new JButton("Detail");
+		btn_itemdetail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		panel_btns.add(btn_itemdetail);
 		
 		JButton btn_itemadd = new JButton("Add");
 		panel_btns.add(btn_itemadd);
 		
 		
-		JPanel panel_display = new JPanel();
-		panel_main.add(panel_display);
+	}
+
+	/**
+	 * Launch the application.
+	 */
+	public static void start(final int uid) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ShopInfoUI window = new ShopInfoUI(uid); //3 is just example
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	/**
 	 * Launch the application.

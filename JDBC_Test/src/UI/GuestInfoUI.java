@@ -6,7 +6,7 @@ import java.awt.*;
 import Kernel.GuestInfoKernel;
 import Kernel.Constants;
 public class GuestInfoUI {
-	
+	private int uid;
 	private GuestInfoKernel kernel;
 	private JFrame frame;
 	private JLabel lbl_title;
@@ -20,12 +20,13 @@ public class GuestInfoUI {
 	 * Create the application.
 	 */
 	public GuestInfoUI(int uid) {
+		this.uid=uid;
 		kernel=new GuestInfoKernel();
 		initialize();
-		kernel.GetInfo(uid);
 		update();
 	}
 	private void update(){
+		kernel.GetInfo(uid); //refresh
 		txtf_Fullname.setText(kernel.getFullname());
 		txtf_Studentid.setText(kernel.getStudentid());
 		txtf_dept.setText(kernel.getDept());

@@ -5,6 +5,8 @@ import java.awt.*;
 import javax.swing.*; //JFrame
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
+import Kernel.Constants;
 import Kernel.LoginKernel;
 
 public class LoginUI {
@@ -84,7 +86,7 @@ public class LoginUI {
 		});
 		pan_sub.add(btn_submit);
 	}
-	
+
 	private void LoginProcess(){
 		String name=txtf_acc.getText();
 		char[] pwdarr=txtf_pwd.getPassword();
@@ -97,7 +99,12 @@ public class LoginUI {
 		boolean success=kernel.Login(name,pwd);
 		if(success){
 			JOptionPane.showMessageDialog(frame, "Welcome "+name ,"Welcome",JOptionPane.INFORMATION_MESSAGE);
-			GuestInfoUI.start(kernel.getUid());
+			if(kernel.getType()==Constants.GUEST){
+				GuestInfoUI.start(kernel.getUid());
+			}
+			else if(kernel.getType()==Constants.SHOP){
+				ShopInfoUI.start(kernel.getUid());
+			}
 		}else{
 			JOptionPane.showMessageDialog(frame, "Login Falied", "Warning", JOptionPane.ERROR_MESSAGE);
 		}
