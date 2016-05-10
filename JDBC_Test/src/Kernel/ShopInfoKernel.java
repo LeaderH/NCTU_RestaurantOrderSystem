@@ -74,11 +74,40 @@ public class ShopInfoKernel extends MySQL{
 		}
 	}
 	
+	public void updateItemInfo(Item I){
+		String selectSQL = "UPDATE item "+
+				"SET fullname='"+I.getFullname()+"'"+
+				", value="+I.getValue()+
+				", description='"+I.getDescription()+"'"+
+				" WHERE i_id="+I.getI_id()+"";
+		try {
+			stat = con.createStatement();
+			stat.executeUpdate(selectSQL);
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+	}
+	
+	public void insertItem(Item I){
+		String insertdbSQL = "INSERT into item(s_id,fullname,value,description) " + 
+			      "VALUES ('"+sid+"','"+I.getFullname()+"','"+I.getValue()+"','"+I.getDescription()+"')"; 
+		try {
+			stat = con.createStatement();
+			stat.executeUpdate(insertdbSQL);
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+	}
+	
 	/**
 	 * testing func
 	 * @param args
 	 */
-	public static void main(String[] args) {
+ 	public static void main(String[] args) {
 		ShopInfoKernel test = new ShopInfoKernel();
 		test.GetInfo(3);
 		Item[] itemlist=test.getItemList();
@@ -100,7 +129,7 @@ public class ShopInfoKernel extends MySQL{
 		return itemList;
 	}
 	
-	public class Item{
+	public static class Item{
 		private int i_id;
 		private int s_id;
 		private String fullname;
@@ -115,7 +144,7 @@ public class ShopInfoKernel extends MySQL{
 			fullname=null;
 			description=null;
 		}
-		Item(int iid,int sid,String name,int v,String des,boolean available){
+		public Item(int iid,int sid,String name,int v,String des,boolean available){
 			i_id=iid;
 			s_id=sid;
 			value=v;
@@ -123,7 +152,7 @@ public class ShopInfoKernel extends MySQL{
 			description=des;
 			this.available=available;
 		}
-		Item(){
+		public Item(){
 			varinit();
 		}
 		public boolean isAvailable() {

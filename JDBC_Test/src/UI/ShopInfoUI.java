@@ -15,6 +15,7 @@ import javax.swing.border.LineBorder;
 
 public class ShopInfoUI {
 	private int uid;
+	private Item[] itemList;
 	private ShopInfoKernel kernel;
 	private JFrame frame;
 	private JTextField txtf_name;
@@ -23,6 +24,12 @@ public class ShopInfoUI {
 	private JPanel panel_display;
 	private JTextField txtf_item_name;
 	private JTextField txtf_item_value;
+	private JTextArea textArea_item_des;
+	private JButton btnEdit;
+	private JButton btnNew;
+	private JButton btnCancel;
+	
+	private Item item_selected;
 	
 	private final CardLayout display=new CardLayout(0, 0);
 	private final String DEFAULT_CARD="deafult";
@@ -32,6 +39,7 @@ public class ShopInfoUI {
 	 */
 	public ShopInfoUI(int uid) {
 		this.uid=uid;
+		itemList=new Item[1];
 		kernel=new ShopInfoKernel();
 		initialize();
 		update();
@@ -41,21 +49,61 @@ public class ShopInfoUI {
 		kernel.GetInfo(uid); //refresh
 		txtf_name.setText(kernel.getFullname());
 		txtf_loc.setText(kernel.getLocation());
-		Item[] List=kernel.getItemList();
+		itemList=kernel.getItemList();
 		ArrayList<String> arr=new ArrayList<String>();
-		for(Item I : List){
+		for(Item I : itemList){
 			if(I.isAvailable())
 				arr.add(String.format("%s(%d)", I.getFullname(),I.getValue()));
 		}
 		list_item.setListData(arr.toArray(new String[1]));
-		
 	}
+	
+	
 	private void btn_detail_action(){
-		//System.out.println("fff");
-		display.show(panel_display, ITEM_DETAIL_CARD);
+		try{
+			item_selected=itemList[list_item.getSelectedIndex()];
+			display.show(panel_display, ITEM_DETAIL_CARD);
+			txtf_item_name.setText(item_selected.getFullname());
+			txtf_item_value.setText(Integer.toString(item_selected.getValue()));
+			textArea_item_des.setText(item_selected.getDescription());
+		}catch(IndexOutOfBoundsException e){
+			display.show(panel_display, DEFAULT_CARD);
+		}
 	}
-	
-	
+	private void btn_edit_action(){
+		Item item_edited=new Item(item_selected.getI_id(),item_selected.getS_id(),
+				txtf_item_name.getText(),Integer.parseInt(txtf_item_value.getText()),textArea_item_des.getText(),
+				true
+				);
+		//Item(int iid,int sid,String name,int v,String des,boolean available);
+		kernel.updateItemInfo(item_edited);
+		update();
+	}
+	private void btn_add_action(){
+		display.show(panel_display, ITEM_DETAIL_CARD);
+		btnNew.setVisible(true);
+		btnEdit.setVisible(false);
+		txtf_item_name.setText(null);
+		txtf_item_value.setText(null);
+		textArea_item_des.setText(null);
+	}
+	private void btn_new_action(){
+		display.show(panel_display, DEFAULT_CARD);
+		btnNew.setVisible(false);
+		btnEdit.setVisible(true);
+		Item item_new=new Item(-1,-1,
+				txtf_item_name.getText(),Integer.parseInt(txtf_item_value.getText()),textArea_item_des.getText(),
+				true
+				);
+		//Item(int iid,int sid,String name,int v,String des,boolean available);
+		kernel.insertItem(item_new);
+		update();
+	}
+	private void btn_cancel_action(){
+		display.show(panel_display, DEFAULT_CARD);
+		btnNew.setVisible(false);
+		btnEdit.setVisible(true);
+	}
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -129,7 +177,7 @@ public class ShopInfoUI {
 		
 		JPanel panel_card_default = new JPanel();
 		panel_card_default.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		panel_display.add(panel_card_default, "default");
+		panel_display.add(panel_card_default, DEFAULT_CARD);
 		panel_card_default.setLayout(new BorderLayout(0, 0));
 		
 		JLabel lbl_SelAct = new JLabel("Please Select an action");
@@ -138,7 +186,7 @@ public class ShopInfoUI {
 		
 		JPanel panel_card1 = new JPanel();
 		panel_card1.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		panel_display.add(panel_card1, "item_selected");
+		panel_display.add(panel_card1, ITEM_DETAIL_CARD);
 		panel_card1.setLayout(new BorderLayout(0, 0));
 		
 		JLabel lblItemDetail = new JLabel("Item Detail");
@@ -178,14 +226,37 @@ public class ShopInfoUI {
 		lblDescription.setHorizontalAlignment(SwingConstants.CENTER);
 		panel_des.add(lblDescription, BorderLayout.NORTH);
 		
-		JTextArea textArea_item_des = new JTextArea();
+		textArea_item_des = new JTextArea();
 		panel_des.add(textArea_item_des, BorderLayout.CENTER);
 		
 		JPanel panel_item_btns = new JPanel();
 		panel_card1.add(panel_item_btns, BorderLayout.SOUTH);
 		
-		JButton btnEdit = new JButton("Edit");
+		btnEdit = new JButton("Edit");
+		btnEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_edit_action();
+			}
+		});
 		panel_item_btns.add(btnEdit);
+		
+		btnNew = new JButton("New");
+		btnNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_new_action();
+			}
+		});
+		panel_item_btns.add(btnNew);
+		btnNew.setVisible(false);
+		
+		btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_cancel_action();
+			}
+		});
+		panel_item_btns.add(btnCancel);
+		//btnCancel.setVisible(false);
 		
 		JButton btn_itemdetail = new JButton("Detail");
 		btn_itemdetail.addActionListener(new ActionListener() {
@@ -196,6 +267,11 @@ public class ShopInfoUI {
 		panel_btns.add(btn_itemdetail);
 		
 		JButton btn_itemadd = new JButton("Add");
+		btn_itemadd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_add_action();
+			}
+		});
 		panel_btns.add(btn_itemadd);
 		
 		
