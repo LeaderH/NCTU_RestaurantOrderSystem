@@ -63,6 +63,7 @@ public class GuestInfoUI {
 		pan_name.add(lbl_Fullname);
 		
 		txtf_Fullname = new JTextField();
+		txtf_Fullname.setEditable(false);
 		pan_name.add(txtf_Fullname);
 		txtf_Fullname.setColumns(10);
 		
@@ -88,6 +89,7 @@ public class GuestInfoUI {
 		pan_studentid.add(lbl_Studentid);
 		
 		txtf_Studentid = new JTextField();
+		txtf_Studentid.setEditable(false);
 		pan_studentid.add(txtf_Studentid);
 		txtf_Studentid.setColumns(10);
 		
@@ -98,6 +100,7 @@ public class GuestInfoUI {
 		pan_dept.add(lbl_dept);
 		
 		txtf_dept = new JTextField();
+		txtf_dept.setEditable(false);
 		pan_dept.add(txtf_dept);
 		txtf_dept.setColumns(10);
 	}

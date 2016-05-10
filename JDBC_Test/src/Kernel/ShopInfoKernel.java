@@ -18,7 +18,7 @@ public class ShopInfoKernel extends MySQL{
 		itemList=new Item[1];
 	}
 	
-	ShopInfoKernel(){
+	public ShopInfoKernel(){
 		super();
 		varinit();
 	}
