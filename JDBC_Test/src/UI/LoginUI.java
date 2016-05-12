@@ -118,6 +118,7 @@ public class LoginUI {
 				try {
 					LoginUI window = new LoginUI();
 					window.frame.setVisible(true);
+					window.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
