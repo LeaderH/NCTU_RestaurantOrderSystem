@@ -2,7 +2,6 @@ package Kernel;
 
 import java.sql.*;
 
-import Md5.Md5;
 import db.MySQL;
 
 public class GuestInfoKernel extends MySQL{
@@ -37,7 +36,7 @@ public class GuestInfoKernel extends MySQL{
 	public boolean GetInfo(int uid) {
 		boolean success=true;
 		String selectSQL = "SELECT g_id,fullname,studentid,dept,gender FROM guest "+
-				"WHERE uid='"+uid+"'";
+				"WHERE uid='"+uid+"'";;
 		try {
 			stat = con.createStatement();
 			rs = stat.executeQuery(selectSQL);
@@ -75,6 +74,44 @@ public class GuestInfoKernel extends MySQL{
 	}
 	public boolean getGender() {
 		return gender;
+	}
+	
+	
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
+	}
+	public void setStudentid(String studentid) {
+		this.studentid = studentid;
+	}
+	public void setDept(String dept) {
+		this.dept = dept;
+	}
+	public void setGender(boolean gender) {
+		if(gender){
+			this.gender = Constants.FEMALE;
+		}else{
+			this.gender = Constants.MALE;
+		}
+	}
+
+	
+	////////////////////////////////////////////////////my change!!!!
+	public void send_data(){
+		String selectSQL = "UPDATE guest "+
+				"SET fullname='"+this.getFullname()+"'"+
+				", studentid="+this.getStudentid()+
+				", dept='"+this.getDept()+"'"+
+				", gender='"+((this.getGender() == Constants.FEMALE)?1:0)+"'"+
+				" WHERE g_id="+this.getGid()+"";
+		try {
+			stat = con.createStatement();
+			stat.executeUpdate(selectSQL);
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+	
 	}
 	/**
 	 * testing func

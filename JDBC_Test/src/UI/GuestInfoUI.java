@@ -3,6 +3,7 @@ package UI;
 import java.awt.EventQueue;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import Kernel.GuestInfoKernel;
 import Kernel.Constants;
 public class GuestInfoUI {
@@ -16,6 +17,21 @@ public class GuestInfoUI {
 	private ButtonGroup radioGroup;
 	private JRadioButton rdbtnMale;
 	private JRadioButton rdbtnFemale;
+	
+	
+	
+	
+/////my revise
+	private JButton enter_in_frame;
+	
+	
+	private JFrame optionJframe;
+	private JButton revisedata;
+	
+	
+	/////
+	
+	
 	/**
 	 * Create the application.
 	 */
@@ -64,7 +80,7 @@ public class GuestInfoUI {
 		pan_name.add(lbl_Fullname);
 		
 		txtf_Fullname = new JTextField();
-		txtf_Fullname.setEditable(false);
+		txtf_Fullname.setEditable(true);
 		pan_name.add(txtf_Fullname);
 		txtf_Fullname.setColumns(10);
 		
@@ -90,7 +106,7 @@ public class GuestInfoUI {
 		pan_studentid.add(lbl_Studentid);
 		
 		txtf_Studentid = new JTextField();
-		txtf_Studentid.setEditable(false);
+		txtf_Studentid.setEditable(true);
 		pan_studentid.add(txtf_Studentid);
 		txtf_Studentid.setColumns(10);
 		
@@ -101,9 +117,86 @@ public class GuestInfoUI {
 		pan_dept.add(lbl_dept);
 		
 		txtf_dept = new JTextField();
-		txtf_dept.setEditable(false);
+		txtf_dept.setEditable(true);
 		pan_dept.add(txtf_dept);
 		txtf_dept.setColumns(10);
+		
+		
+		
+		
+		
+		
+		
+//////  1.set 兩層          2.更新資料          3.放訂單
+		enter_in_frame = new JButton("Enter");
+		pan_dept.add(enter_in_frame);
+
+		enter_in_frame.addActionListener(
+				new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent event){
+						
+						kernel.setFullname(txtf_Fullname.getText());
+						
+						kernel.setStudentid(txtf_Studentid.getText());
+						
+						kernel.setDept(txtf_dept.getText());
+						
+						if(rdbtnMale.getSelectedObjects() == null){
+							kernel.setGender(true);
+						}else{
+							kernel.setGender(false);
+						}
+						
+						/*
+						public void setGender(boolean gender) {
+							if(gender){
+								this.gender = Constants.FEMALE;
+							}else{
+								this.gender = Constants.MALE;
+							}
+						}*/
+						kernel.send_data();
+						////////this.GuestInfoUI(uid);
+					}
+				}
+		);
+		
+		
+		
+		
+		frame.setVisible(false);
+		
+		
+		
+		optionJframe = new JFrame();
+		optionJframe.setBounds(100, 100, 450, 300);
+		
+		optionJframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JPanel panel1 = new JPanel();
+		optionJframe.getContentPane().add(panel1, BorderLayout.CENTER);
+		panel1.setLayout(new GridLayout(3, 0, 0, 0));
+		
+		revisedata = new JButton("revise");
+		
+		
+		panel1.add(revisedata);
+		
+		
+		revisedata.addActionListener(///Anonymous inner class
+				new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent event){
+						frame.setVisible(true);
+					}
+			}
+		);
+		//////  1.set 兩層          2.更新資料          3.放訂單     
+		
+		
+		
+		
 	}
 	/**
 	 * Launch the application.
@@ -113,7 +206,9 @@ public class GuestInfoUI {
 			public void run() {
 				try {
 					GuestInfoUI window = new GuestInfoUI(uid);
-					window.frame.setVisible(true);
+					//window.frame.setVisible(true);
+					window.optionJframe.setVisible(true);///////////////////////revise
+					
 					window.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -126,6 +221,9 @@ public class GuestInfoUI {
 			public void run() {
 				try {
 					GuestInfoUI window = new GuestInfoUI(1);
+					
+					window.optionJframe.setVisible(true);///////////////////////revise
+					
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
