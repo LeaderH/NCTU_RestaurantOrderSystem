@@ -1,13 +1,11 @@
 package UI;
 
-import java.awt.EventQueue;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
 import Kernel.ShopInfoKernel;
-import Kernel.ShopInfoKernel.Item;
+import Kernel.Constants.Item;
 import javax.swing.border.CompoundBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -21,19 +19,23 @@ public class ShopInfoUI {
 	private JTextField txtf_name;
 	private JTextField txtf_loc;
 	private JList<String>	list_item;
-	private JPanel panel_display;
 	private JTextField txtf_item_name;
 	private JTextField txtf_item_value;
 	private JTextArea textArea_item_des;
 	private JButton btnEdit;
 	private JButton btnNew;
 	private JButton btnCancel;
-	
+	JPanel panel_item_interact;
+
 	private Item item_selected;
 	
-	private final CardLayout display=new CardLayout(0, 0);
-	private final String DEFAULT_CARD="deafult";
-	private final String ITEM_DETAIL_CARD="item_selected";
+	private JList<String> list_order;
+	
+	private JTextField txtf_orderer;
+	private JTextField txtf_ordertime;
+	private JTextField txtf_itemrequest;
+	private JTextField txtf_total;
+	
 	/**
 	 * Create the application.
 	 */
@@ -58,16 +60,15 @@ public class ShopInfoUI {
 		list_item.setListData(arr.toArray(new String[1]));
 	}
 	
-	
 	private void btn_detail_action(){
 		try{
+			panel_item_interact.setVisible(true);
 			item_selected=itemList[list_item.getSelectedIndex()];
-			display.show(panel_display, ITEM_DETAIL_CARD);
 			txtf_item_name.setText(item_selected.getFullname());
 			txtf_item_value.setText(Integer.toString(item_selected.getValue()));
 			textArea_item_des.setText(item_selected.getDescription());
 		}catch(IndexOutOfBoundsException e){
-			display.show(panel_display, DEFAULT_CARD);
+			panel_item_interact.setVisible(false);
 		}
 	}
 	private void btn_edit_action(){
@@ -80,7 +81,7 @@ public class ShopInfoUI {
 		update();
 	}
 	private void btn_add_action(){
-		display.show(panel_display, ITEM_DETAIL_CARD);
+		panel_item_interact.setVisible(true);
 		btnNew.setVisible(true);
 		btnEdit.setVisible(false);
 		txtf_item_name.setText(null);
@@ -88,7 +89,6 @@ public class ShopInfoUI {
 		textArea_item_des.setText(null);
 	}
 	private void btn_new_action(){
-		display.show(panel_display, DEFAULT_CARD);
 		btnNew.setVisible(false);
 		btnEdit.setVisible(true);
 		Item item_new=new Item(-1,-1,
@@ -99,107 +99,160 @@ public class ShopInfoUI {
 		kernel.insertItem(item_new);
 		update();
 	}
+	private void btn_delete_action(){
+		try{
+			item_selected=itemList[list_item.getSelectedIndex()];
+			int res=JOptionPane.showConfirmDialog(frame,"Are you sure to delete item "+item_selected.getFullname()+"?",
+					"Confirm",JOptionPane.YES_NO_OPTION);
+			if(res==JOptionPane.YES_OPTION){
+				Item item_edited=new Item(item_selected.getI_id(),item_selected.getS_id(),
+						item_selected.getFullname(),item_selected.getValue(),item_selected.getDescription(),
+						false
+						);
+				//Item(int iid,int sid,String name,int v,String des,boolean available);
+				kernel.updateItemInfo(item_edited);
+				update();
+			}
+		}catch(IndexOutOfBoundsException e){
+			JOptionPane.showMessageDialog(frame, "Please select an item", "Warning", JOptionPane.ERROR_MESSAGE);
+		}
+	}
 	private void btn_cancel_action(){
-		display.show(panel_display, DEFAULT_CARD);
+		panel_item_interact.setVisible(false);
 		btnNew.setVisible(false);
 		btnEdit.setVisible(true);
 	}
-	/**
-	 * Initialize the contents of the frame.
-	 */
- 	private void initialize() {
+	
+	
+	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JLabel lbl_title = new JLabel("Welcome");
 		lbl_title.setFont(new Font("Calibri", Font.BOLD, 24));
 		lbl_title.setHorizontalAlignment(SwingConstants.CENTER);
 		frame.getContentPane().add(lbl_title, BorderLayout.NORTH);
 		
-		JPanel panel_main = new JPanel();
-		frame.getContentPane().add(panel_main, BorderLayout.CENTER);
-		panel_main.setLayout(new GridLayout(1, 0, 0, 0));
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		
+
+	//tab info
 		JPanel panel_info = new JPanel();
+		tabbedPane.addTab("Info", null, panel_info, null);
 		panel_info.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		panel_main.add(panel_info);
 		panel_info.setLayout(new BorderLayout(0, 0));
 		
 		JLabel lblInfo = new JLabel("Info");
 		lblInfo.setFont(new Font("Calibri", Font.PLAIN, 20));
 		lblInfo.setHorizontalAlignment(SwingConstants.CENTER);
 		panel_info.add(lblInfo, BorderLayout.NORTH);
-		
+
 		JPanel panel_detail = new JPanel();
 		panel_info.add(panel_detail, BorderLayout.CENTER);
-		panel_detail.setLayout(new BoxLayout(panel_detail, BoxLayout.Y_AXIS));
-		
+		GridBagLayout gbl_panel_detail = new GridBagLayout();
+		gbl_panel_detail.columnWidths = new int[] { frame.getWidth(), 0 };
+		gbl_panel_detail.rowHeights = new int[] { 35, 35, 0 };
+		gbl_panel_detail.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
+		gbl_panel_detail.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
+		panel_detail.setLayout(gbl_panel_detail);
+
 		JPanel panel_name = new JPanel();
-		panel_detail.add(panel_name);
-		
+		GridBagConstraints gbc_panel_name = new GridBagConstraints();
+		gbc_panel_name.fill = GridBagConstraints.BOTH;
+		gbc_panel_name.gridx = 0;
+		gbc_panel_name.gridy = 0;
+		panel_detail.add(panel_name, gbc_panel_name);
+
 		JLabel lblName = new JLabel("Name");
 		panel_name.add(lblName);
-		
+
 		txtf_name = new JTextField();
 		txtf_name.setEditable(false);
 		panel_name.add(txtf_name);
 		txtf_name.setColumns(10);
-		
+
 		JPanel panel_location = new JPanel();
-		panel_detail.add(panel_location);
-		
+		GridBagConstraints gbc_panel_location = new GridBagConstraints();
+		gbc_panel_location.fill = GridBagConstraints.BOTH;
+		gbc_panel_location.gridx = 0;
+		gbc_panel_location.gridy = 1;
+		panel_detail.add(panel_location, gbc_panel_location);
+
 		JLabel lblLocation = new JLabel("Location");
 		panel_location.add(lblLocation);
-		
+
 		txtf_loc = new JTextField();
 		txtf_loc.setEditable(false);
 		panel_location.add(txtf_loc);
 		txtf_loc.setColumns(10);
+	//end tab info
 		
+	//tab item
 		JPanel panel_item = new JPanel();
-		panel_detail.add(panel_item);
-		panel_item.setLayout(new BorderLayout(0, 0));
+		tabbedPane.addTab("Item", null, panel_item, null);
+		panel_item.setLayout(new BoxLayout(panel_item, BoxLayout.X_AXIS));
 		
+		JPanel panel_itemlist = new JPanel();
+		panel_item.add(panel_itemlist);
+		panel_itemlist.setLayout(new BorderLayout(0, 0));
 		
 		list_item=new JList<String>();
-		panel_item.add(new JScrollPane(list_item),BorderLayout.CENTER);
+		list_item.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane scrollPane = new JScrollPane(list_item);
+		panel_itemlist.add(scrollPane, BorderLayout.CENTER);
 		
 		JPanel panel_btns = new JPanel();
-		panel_detail.add(panel_btns);
+		panel_itemlist.add(panel_btns, BorderLayout.SOUTH);
 		
+		JButton btn_itemdetail = new JButton("Detail");
+		btn_itemdetail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_detail_action();
+			}
+		});
+		panel_btns.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panel_btns.add(btn_itemdetail);
 		
-		panel_display = new JPanel();
-		panel_main.add(panel_display);
-		panel_display.setLayout(display);
+		JButton btn_itemadd = new JButton("Add");
+		btn_itemadd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_add_action();
+			}
+		});
+		panel_btns.add(btn_itemadd);
 		
-		display.show(panel_display, DEFAULT_CARD);
+		JButton btn_itemdelete = new JButton("Delete");
+		btn_itemdelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_delete_action();
+			}
+		});
+		panel_btns.add(btn_itemdelete);
 		
-		JPanel panel_card_default = new JPanel();
-		panel_card_default.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		panel_display.add(panel_card_default, DEFAULT_CARD);
-		panel_card_default.setLayout(new BorderLayout(0, 0));
+		JLabel lblItemlist = new JLabel("ItemList");
+		lblItemlist.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_itemlist.add(lblItemlist, BorderLayout.NORTH);
 		
-		JLabel lbl_SelAct = new JLabel("Please Select an action");
-		lbl_SelAct.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_card_default.add(lbl_SelAct, BorderLayout.CENTER);
-		
-		JPanel panel_card1 = new JPanel();
-		panel_card1.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		panel_display.add(panel_card1, ITEM_DETAIL_CARD);
-		panel_card1.setLayout(new BorderLayout(0, 0));
+		panel_item_interact = new JPanel();
+		panel_item_interact.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel_item.add(panel_item_interact);
+		panel_item_interact.setLayout(new BorderLayout(0, 0));
+		panel_item_interact.setVisible(false);
 		
 		JLabel lblItemDetail = new JLabel("Item Detail");
+		panel_item_interact.add(lblItemDetail, BorderLayout.NORTH);
 		lblItemDetail.setFont(new Font("Calibri", Font.BOLD, 20));
 		lblItemDetail.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_card1.add(lblItemDetail, BorderLayout.NORTH);
 		
-		JPanel panel_itemdetail = new JPanel();
-		panel_card1.add(panel_itemdetail, BorderLayout.CENTER);
-		panel_itemdetail.setLayout(new BoxLayout(panel_itemdetail, BoxLayout.Y_AXIS));
+		JPanel panel_item_details = new JPanel();
+		panel_item_interact.add(panel_item_details, BorderLayout.CENTER);
+		panel_item_details.setLayout(new BoxLayout(panel_item_details, BoxLayout.Y_AXIS));
 		
 		JPanel panel_item_name = new JPanel();
-		panel_itemdetail.add(panel_item_name);
+		panel_item_details.add(panel_item_name);
 		
 		JLabel lblItemname = new JLabel("ItemName");
 		panel_item_name.add(lblItemname);
@@ -209,7 +262,7 @@ public class ShopInfoUI {
 		txtf_item_name.setColumns(10);
 		
 		JPanel panel_item_v = new JPanel();
-		panel_itemdetail.add(panel_item_v);
+		panel_item_details.add(panel_item_v);
 		
 		JLabel lblItemValue = new JLabel("Value");
 		panel_item_v.add(lblItemValue);
@@ -219,7 +272,7 @@ public class ShopInfoUI {
 		txtf_item_value.setColumns(10);
 		
 		JPanel panel_des = new JPanel();
-		panel_itemdetail.add(panel_des);
+		panel_item_details.add(panel_des);
 		panel_des.setLayout(new BorderLayout(0, 0));
 		
 		JLabel lblDescription = new JLabel("Description");
@@ -230,7 +283,7 @@ public class ShopInfoUI {
 		panel_des.add(textArea_item_des, BorderLayout.CENTER);
 		
 		JPanel panel_item_btns = new JPanel();
-		panel_card1.add(panel_item_btns, BorderLayout.SOUTH);
+		panel_item_details.add(panel_item_btns, BorderLayout.SOUTH);
 		
 		btnEdit = new JButton("Edit");
 		btnEdit.addActionListener(new ActionListener() {
@@ -256,27 +309,89 @@ public class ShopInfoUI {
 			}
 		});
 		panel_item_btns.add(btnCancel);
-		//btnCancel.setVisible(false);
+	//end tab item
+	//tab order
+		JPanel panel_order = new JPanel();
+		tabbedPane.addTab("Order", null, panel_order, null);
+		panel_order.setLayout(new BoxLayout(panel_order, BoxLayout.X_AXIS));
 		
-		JButton btn_itemdetail = new JButton("Detail");
-		btn_itemdetail.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				btn_detail_action();
-			}
-		});
-		panel_btns.add(btn_itemdetail);
+		JPanel panel_orderlist = new JPanel();
+		panel_order.add(panel_orderlist);
+		panel_orderlist.setLayout(new BorderLayout(0, 0));
 		
-		JButton btn_itemadd = new JButton("Add");
-		btn_itemadd.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				btn_add_action();
-			}
-		});
-		panel_btns.add(btn_itemadd);
+		JLabel lblOrderlist = new JLabel("Order List");
+		lblOrderlist.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_orderlist.add(lblOrderlist, BorderLayout.NORTH);
 		
 		
+		list_order = new JList<String>();
+		list_order.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane scrollPane_1 = new JScrollPane(list_order);
+		panel_orderlist.add(scrollPane_1, BorderLayout.CENTER);
+		
+		JPanel panel_order_interact = new JPanel();
+		panel_order.add(panel_order_interact);
+		panel_order_interact.setLayout(new BorderLayout(0, 0));
+		
+		JLabel lblOrderDetail = new JLabel("Order Detail");
+		lblOrderDetail.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOrderDetail.setFont(new Font("Calibri", Font.BOLD, 20));
+		panel_order_interact.add(lblOrderDetail, BorderLayout.NORTH);
+		
+		JPanel panel_order_details = new JPanel();
+		panel_order_interact.add(panel_order_details, BorderLayout.CENTER);
+		panel_order_details.setLayout(new BoxLayout(panel_order_details, BoxLayout.Y_AXIS));
+		
+		JPanel panel_orderer = new JPanel();
+		panel_order_details.add(panel_orderer);
+		
+		JLabel lblOrderer = new JLabel("Orderer");
+		panel_orderer.add(lblOrderer);
+		
+		txtf_orderer = new JTextField();
+		panel_orderer.add(txtf_orderer);
+		txtf_orderer.setColumns(10);
+		
+		JPanel panel_order_time = new JPanel();
+		panel_order_details.add(panel_order_time);
+		
+		JLabel lblOrdertime = new JLabel("OrderTime");
+		panel_order_time.add(lblOrdertime);
+		
+		txtf_ordertime = new JTextField();
+		panel_order_time.add(txtf_ordertime);
+		txtf_ordertime.setColumns(10);
+		
+		JPanel panel_orderitem = new JPanel();
+		panel_order_details.add(panel_orderitem);
+		
+		JLabel lblItemRequest = new JLabel("ItemRequest");
+		panel_orderitem.add(lblItemRequest);
+		
+		txtf_itemrequest = new JTextField();
+		panel_orderitem.add(txtf_itemrequest);
+		txtf_itemrequest.setColumns(10);
+		
+		JPanel panel_value = new JPanel();
+		panel_order_details.add(panel_value);
+		
+		JLabel lblTotal = new JLabel("Total");
+		panel_value.add(lblTotal);
+		
+		txtf_total = new JTextField();
+		panel_value.add(txtf_total);
+		txtf_total.setColumns(10);
+		
+		JPanel panel_order_btns = new JPanel();
+		panel_order_details.add(panel_order_btns);
+		
+		JButton btnDone = new JButton("Done");
+		panel_order_btns.add(btnDone);
+		
+		JButton btnClose = new JButton("Close");
+		panel_order_btns.add(btnClose);
 	}
-
+	
 	/**
 	 * Launch the application.
 	 */
