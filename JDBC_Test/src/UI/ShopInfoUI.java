@@ -5,7 +5,7 @@ import java.awt.*;
 import java.util.*;
 
 import Kernel.ShopInfoKernel;
-import Kernel.ShopInfoKernel.Item;
+import Kernel.Constants.Item;
 import javax.swing.border.CompoundBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -26,11 +26,11 @@ public class ShopInfoUI {
 	private JButton btnNew;
 	private JButton btnCancel;
 	JPanel panel_item_interact;
+
+	private Item item_selected;
 	
 	private JList<String> list_order;
 	
-	
-	private Item item_selected;
 	private JTextField txtf_orderer;
 	private JTextField txtf_ordertime;
 	private JTextField txtf_itemrequest;
@@ -59,7 +59,6 @@ public class ShopInfoUI {
 		}
 		list_item.setListData(arr.toArray(new String[1]));
 	}
-	
 	
 	private void btn_detail_action(){
 		try{
@@ -118,7 +117,6 @@ public class ShopInfoUI {
 			JOptionPane.showMessageDialog(frame, "Please select an item", "Warning", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
 	private void btn_cancel_action(){
 		panel_item_interact.setVisible(false);
 		btnNew.setVisible(false);
