@@ -38,6 +38,7 @@ public class GuestInfoKernel extends MySQL{
 		String selectSQL = "SELECT g_id,fullname,studentid,dept,gender FROM guest "+
 				"WHERE uid='"+uid+"'";;
 		try {
+			if(con==null) reconnect();//////////////////////important change!!!
 			stat = con.createStatement();
 			rs = stat.executeQuery(selectSQL);
 			if(rs.next()) {
@@ -94,7 +95,65 @@ public class GuestInfoKernel extends MySQL{
 		}
 	}
 
-	
+	public String getOrderSyntex(){
+		
+		
+		String selectSQL = "SELECT o_id FROM order "+
+//				,g_id,sid,isdone,timestmp
+				"WHERE 'gid'='"+gid+"'";
+		
+		String information_string = new String("") ;
+				
+		try {
+			if(con==null) reconnect();//////////////////////important change!!!
+			stat = con.createStatement();
+			rs = stat.executeQuery(selectSQL);
+			if(rs.next()) {
+				
+				information_string = " o_id = ";
+				information_string = information_string + rs.getInt("o_id");
+				information_string += "\n";
+
+				/*
+				information_string = " g_id = ";
+				information_string = information_string + rs.getInt("g_id");
+				information_string += "\n";
+
+				information_string = " sid = ";
+				information_string = information_string + rs.getInt("sid");
+				information_string += "\n";
+				
+				information_string = " isdone = ";
+				information_string = information_string + rs.getInt("isdone");
+				information_string += "\n";
+				
+				information_string = " timestmp = ";
+				information_string = information_string + rs.getString("timestmp");
+				information_string += "\n";
+				*/
+				
+				/*	
+				gid=rs.getInt("g_id");
+				fullname=rs.getString("fullname");
+				studentid=String.format("%07d", rs.getInt("studentid"));
+				dept=rs.getString("dept");
+				gender=rs.getBoolean("gender");
+				*/
+			
+			}
+			else{
+				
+				information_string = "there is error!!!!!!!";
+				
+				varinit();
+			}
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+		return information_string;
+	}
 	////////////////////////////////////////////////////my change!!!!
 	public void send_data(){
 		String selectSQL = "UPDATE guest "+
