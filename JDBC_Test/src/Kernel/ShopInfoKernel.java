@@ -75,10 +75,12 @@ public class ShopInfoKernel extends MySQL{
 	}
 	
 	public void updateItemInfo(Item I){
+		int avail=I.isAvailable()?1:0;
 		String selectSQL = "UPDATE item "+
 				"SET fullname='"+I.getFullname()+"'"+
 				", value="+I.getValue()+
 				", description='"+I.getDescription()+"'"+
+				", available='"+avail+"'"+
 				" WHERE i_id="+I.getI_id()+"";
 		try {
 			stat = con.createStatement();

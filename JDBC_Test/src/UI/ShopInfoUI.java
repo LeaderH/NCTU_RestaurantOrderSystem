@@ -19,7 +19,6 @@ public class ShopInfoUI {
 	private JTextField txtf_name;
 	private JTextField txtf_loc;
 	private JList<String>	list_item;
-	private JPanel panel_display;
 	private JTextField txtf_item_name;
 	private JTextField txtf_item_value;
 	private JTextArea textArea_item_des;
@@ -28,11 +27,15 @@ public class ShopInfoUI {
 	private JButton btnCancel;
 	JPanel panel_item_interact;
 	
-	private Item item_selected;
+	private JList<String> list_order;
 	
-	private final CardLayout display=new CardLayout(0, 0);
-	private final String DEFAULT_CARD="deafult";
-	private final String ITEM_DETAIL_CARD="item_selected";
+	
+	private Item item_selected;
+	private JTextField txtf_orderer;
+	private JTextField txtf_ordertime;
+	private JTextField txtf_itemrequest;
+	private JTextField txtf_total;
+	
 	/**
 	 * Create the application.
 	 */
@@ -70,24 +73,23 @@ public class ShopInfoUI {
 		}
 	}
 	private void btn_edit_action(){
-		/*Item item_edited=new Item(item_selected.getI_id(),item_selected.getS_id(),
+		Item item_edited=new Item(item_selected.getI_id(),item_selected.getS_id(),
 				txtf_item_name.getText(),Integer.parseInt(txtf_item_value.getText()),textArea_item_des.getText(),
 				true
 				);
 		//Item(int iid,int sid,String name,int v,String des,boolean available);
 		kernel.updateItemInfo(item_edited);
-		update();*/
+		update();
 	}
 	private void btn_add_action(){
-		/*display.show(panel_display, ITEM_DETAIL_CARD);
+		panel_item_interact.setVisible(true);
 		btnNew.setVisible(true);
 		btnEdit.setVisible(false);
 		txtf_item_name.setText(null);
 		txtf_item_value.setText(null);
-		textArea_item_des.setText(null);*/
+		textArea_item_des.setText(null);
 	}
 	private void btn_new_action(){
-		/*display.show(panel_display, DEFAULT_CARD);
 		btnNew.setVisible(false);
 		btnEdit.setVisible(true);
 		Item item_new=new Item(-1,-1,
@@ -96,12 +98,31 @@ public class ShopInfoUI {
 				);
 		//Item(int iid,int sid,String name,int v,String des,boolean available);
 		kernel.insertItem(item_new);
-		update();*/
+		update();
 	}
+	private void btn_delete_action(){
+		try{
+			item_selected=itemList[list_item.getSelectedIndex()];
+			int res=JOptionPane.showConfirmDialog(frame,"Are you sure to delete item "+item_selected.getFullname()+"?",
+					"Confirm",JOptionPane.YES_NO_OPTION);
+			if(res==JOptionPane.YES_OPTION){
+				Item item_edited=new Item(item_selected.getI_id(),item_selected.getS_id(),
+						item_selected.getFullname(),item_selected.getValue(),item_selected.getDescription(),
+						false
+						);
+				//Item(int iid,int sid,String name,int v,String des,boolean available);
+				kernel.updateItemInfo(item_edited);
+				update();
+			}
+		}catch(IndexOutOfBoundsException e){
+			JOptionPane.showMessageDialog(frame, "Please select an item", "Warning", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
 	private void btn_cancel_action(){
-		/*display.show(panel_display, DEFAULT_CARD);
+		panel_item_interact.setVisible(false);
 		btnNew.setVisible(false);
-		btnEdit.setVisible(true);*/
+		btnEdit.setVisible(true);
 	}
 	
 	
@@ -134,7 +155,7 @@ public class ShopInfoUI {
 		JPanel panel_detail = new JPanel();
 		panel_info.add(panel_detail, BorderLayout.CENTER);
 		GridBagLayout gbl_panel_detail = new GridBagLayout();
-		gbl_panel_detail.columnWidths = new int[] { 427, 0 };
+		gbl_panel_detail.columnWidths = new int[] { frame.getWidth(), 0 };
 		gbl_panel_detail.rowHeights = new int[] { 35, 35, 0 };
 		gbl_panel_detail.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
 		gbl_panel_detail.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
@@ -194,6 +215,7 @@ public class ShopInfoUI {
 				btn_detail_action();
 			}
 		});
+		panel_btns.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		panel_btns.add(btn_itemdetail);
 		
 		JButton btn_itemadd = new JButton("Add");
@@ -203,6 +225,14 @@ public class ShopInfoUI {
 			}
 		});
 		panel_btns.add(btn_itemadd);
+		
+		JButton btn_itemdelete = new JButton("Delete");
+		btn_itemdelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_delete_action();
+			}
+		});
+		panel_btns.add(btn_itemdelete);
 		
 		JLabel lblItemlist = new JLabel("ItemList");
 		lblItemlist.setHorizontalAlignment(SwingConstants.CENTER);
@@ -283,8 +313,85 @@ public class ShopInfoUI {
 		panel_item_btns.add(btnCancel);
 	//end tab item
 	//tab order
-		JPanel panel_2 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_2, null);
+		JPanel panel_order = new JPanel();
+		tabbedPane.addTab("Order", null, panel_order, null);
+		panel_order.setLayout(new BoxLayout(panel_order, BoxLayout.X_AXIS));
+		
+		JPanel panel_orderlist = new JPanel();
+		panel_order.add(panel_orderlist);
+		panel_orderlist.setLayout(new BorderLayout(0, 0));
+		
+		JLabel lblOrderlist = new JLabel("Order List");
+		lblOrderlist.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_orderlist.add(lblOrderlist, BorderLayout.NORTH);
+		
+		
+		list_order = new JList<String>();
+		list_order.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane scrollPane_1 = new JScrollPane(list_order);
+		panel_orderlist.add(scrollPane_1, BorderLayout.CENTER);
+		
+		JPanel panel_order_interact = new JPanel();
+		panel_order.add(panel_order_interact);
+		panel_order_interact.setLayout(new BorderLayout(0, 0));
+		
+		JLabel lblOrderDetail = new JLabel("Order Detail");
+		lblOrderDetail.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOrderDetail.setFont(new Font("Calibri", Font.BOLD, 20));
+		panel_order_interact.add(lblOrderDetail, BorderLayout.NORTH);
+		
+		JPanel panel_order_details = new JPanel();
+		panel_order_interact.add(panel_order_details, BorderLayout.CENTER);
+		panel_order_details.setLayout(new BoxLayout(panel_order_details, BoxLayout.Y_AXIS));
+		
+		JPanel panel_orderer = new JPanel();
+		panel_order_details.add(panel_orderer);
+		
+		JLabel lblOrderer = new JLabel("Orderer");
+		panel_orderer.add(lblOrderer);
+		
+		txtf_orderer = new JTextField();
+		panel_orderer.add(txtf_orderer);
+		txtf_orderer.setColumns(10);
+		
+		JPanel panel_order_time = new JPanel();
+		panel_order_details.add(panel_order_time);
+		
+		JLabel lblOrdertime = new JLabel("OrderTime");
+		panel_order_time.add(lblOrdertime);
+		
+		txtf_ordertime = new JTextField();
+		panel_order_time.add(txtf_ordertime);
+		txtf_ordertime.setColumns(10);
+		
+		JPanel panel_orderitem = new JPanel();
+		panel_order_details.add(panel_orderitem);
+		
+		JLabel lblItemRequest = new JLabel("ItemRequest");
+		panel_orderitem.add(lblItemRequest);
+		
+		txtf_itemrequest = new JTextField();
+		panel_orderitem.add(txtf_itemrequest);
+		txtf_itemrequest.setColumns(10);
+		
+		JPanel panel_value = new JPanel();
+		panel_order_details.add(panel_value);
+		
+		JLabel lblTotal = new JLabel("Total");
+		panel_value.add(lblTotal);
+		
+		txtf_total = new JTextField();
+		panel_value.add(txtf_total);
+		txtf_total.setColumns(10);
+		
+		JPanel panel_order_btns = new JPanel();
+		panel_order_details.add(panel_order_btns);
+		
+		JButton btnDone = new JButton("Done");
+		panel_order_btns.add(btnDone);
+		
+		JButton btnClose = new JButton("Close");
+		panel_order_btns.add(btnClose);
 	}
 	
 	/**
