@@ -6,6 +6,7 @@ import java.util.*;
 
 import Kernel.ShopInfoKernel;
 import Kernel.Constants.Item;
+import Kernel.Constants.Order;
 import javax.swing.border.CompoundBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -25,7 +26,7 @@ public class ShopInfoUI {
 	private JButton btnEdit;
 	private JButton btnNew;
 	private JButton btnCancel;
-	JPanel panel_item_interact;
+	private JPanel panel_item_interact;
 
 	private Item item_selected;
 	
@@ -35,7 +36,9 @@ public class ShopInfoUI {
 	private JTextField txtf_ordertime;
 	private JTextField txtf_itemrequest;
 	private JTextField txtf_total;
-	
+	private JPanel panel_order_interact;
+	private Order[] orderList;
+	private Order order_selected;
 	/**
 	 * Create the application.
 	 */
@@ -54,10 +57,19 @@ public class ShopInfoUI {
 		itemList=kernel.getItemList();
 		ArrayList<String> arr=new ArrayList<String>();
 		for(Item I : itemList){
-			if(I.isAvailable())
+			if(I.isAvailable() && I.getI_id()>=0 )
 				arr.add(String.format("%s(%d)", I.getFullname(),I.getValue()));
 		}
 		list_item.setListData(arr.toArray(new String[1]));
+		
+		orderList=kernel.getOrderList();
+		arr=new ArrayList<String>();
+		for(Order O : orderList){
+			if(!O.isIsdone() && O.getO_id()>=0)
+				arr.add(String.format("%-2d %-2d * %-2d",O.getG_id(),O.getI_id(),O.getQuant()));
+		}
+		list_order.setListData(arr.toArray(new String[1]));
+		
 	}
 	
 	private void btn_detail_action(){
@@ -329,7 +341,7 @@ public class ShopInfoUI {
 		JScrollPane scrollPane_1 = new JScrollPane(list_order);
 		panel_orderlist.add(scrollPane_1, BorderLayout.CENTER);
 		
-		JPanel panel_order_interact = new JPanel();
+		panel_order_interact = new JPanel();
 		panel_order.add(panel_order_interact);
 		panel_order_interact.setLayout(new BorderLayout(0, 0));
 		

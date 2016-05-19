@@ -5,18 +5,23 @@ import java.util.*;
 
 import db.MySQL;
 import Kernel.Constants.Item;
+import Kernel.Constants.Order;
 
 public class ShopInfoKernel extends MySQL{
 	private int sid;
 	private String fullname;
 	private String location;
 	private Item[] itemList;
+	private Order[] orderList;
 	
+	
+
 	private void varinit(){
 		sid=-1;
 		fullname=null;
 		location=null;
 		itemList=new Item[1];
+		orderList=new Order[1];
 	}
 	
 	public ShopInfoKernel(){
@@ -29,6 +34,7 @@ public class ShopInfoKernel extends MySQL{
 		String selectSQL = "SELECT s_id,fullname,location FROM shop "+
 				"WHERE uid='"+uid+"'";
 		try {
+			if(con==null) reconnect();
 			stat = con.createStatement();
 			rs = stat.executeQuery(selectSQL);
 			if(rs.next()) {
@@ -37,6 +43,7 @@ public class ShopInfoKernel extends MySQL{
 				fullname=rs.getString("fullname");
 				location=rs.getString("location");
 				FetchItemList();
+				FetchOrderList();
 			}
 			else{
 				varinit();
@@ -54,6 +61,7 @@ public class ShopInfoKernel extends MySQL{
 				"WHERE s_id='"+sid+"'";
 		ArrayList<Item> L=new ArrayList<Item>();
 		try {
+			if(con==null) reconnect();
 			stat = con.createStatement();
 			rs = stat.executeQuery(selectSQL);
 			while(rs.next()) {
@@ -106,6 +114,41 @@ public class ShopInfoKernel extends MySQL{
 		}
 	}
 	
+	public void FetchOrderList(){
+		//String selectSQL = "SELECT o_id,g_id,isdone,timestmp,i_id,quant FROM `order` "+
+		String selectSQL = "SELECT * FROM `order` "+
+				"WHERE s_id='"+sid+"'";
+				
+		ArrayList<Order> L=new ArrayList<Order>();
+		//String selectSQL = "SELECT * FROM `Order` WHERE 1";
+				//"WHERE s_id='1'";
+		try {
+			if(con==null) reconnect();
+			stat = con.createStatement();
+			rs = stat.executeQuery(selectSQL);
+			
+			while(rs.next()) {
+				Order I=new Order(
+						rs.getInt("o_id"),
+						rs.getInt("g_id"),
+						sid,
+						rs.getInt("i_id"),
+						rs.getInt("quant"),
+						rs.getBoolean("isdone"),
+						rs.getTimestamp("timestmp")
+						);
+				//Order(int oid,int gid,int sid,int iid,
+				//		int quant,boolean isdone,Timestamp ts)
+				L.add(I);
+			}
+			orderList=L.toArray(orderList);
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+	}
+	
 	
 	/**
 	 * testing func
@@ -114,10 +157,7 @@ public class ShopInfoKernel extends MySQL{
  	public static void main(String[] args) {
 		ShopInfoKernel test = new ShopInfoKernel();
 		test.GetInfo(3);
-		Item[] itemlist=test.getItemList();
-		for(Item I:itemlist){
-			System.out.println(I.getFullname());
-		}
+		test.FetchOrderList();
 	}
 	
 	public int getSid() {
@@ -131,5 +171,8 @@ public class ShopInfoKernel extends MySQL{
 	}
 	public Item[] getItemList() {
 		return itemList;
+	}
+	public Order[] getOrderList() {
+		return orderList;
 	}
 }
