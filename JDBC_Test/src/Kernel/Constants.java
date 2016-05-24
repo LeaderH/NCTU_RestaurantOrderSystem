@@ -76,6 +76,7 @@ public class Constants {
 			o_id=oid;
 			g_id=gid;
 			s_id=sid;
+			i_id=iid;
 			this.quant=quant;
 			this.isdone=isdone;
 			timestamp=ts;

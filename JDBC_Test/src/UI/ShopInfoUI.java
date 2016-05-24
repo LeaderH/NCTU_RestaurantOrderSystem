@@ -5,6 +5,7 @@ import java.awt.*;
 import java.util.*;
 
 import Kernel.ShopInfoKernel;
+import Kernel.GuestInfoKernel;
 import Kernel.Constants.Item;
 import Kernel.Constants.Order;
 import javax.swing.border.CompoundBorder;
@@ -39,6 +40,10 @@ public class ShopInfoUI {
 	private JPanel panel_order_interact;
 	private Order[] orderList;
 	private Order order_selected;
+	
+	private final GuestInfoKernel gkernel=new GuestInfoKernel();
+	
+	
 	/**
 	 * Create the application.
 	 */
@@ -65,8 +70,13 @@ public class ShopInfoUI {
 		orderList=kernel.getOrderList();
 		arr=new ArrayList<String>();
 		for(Order O : orderList){
-			if(!O.isIsdone() && O.getO_id()>=0)
-				arr.add(String.format("%-2d %-2d * %-2d",O.getG_id(),O.getI_id(),O.getQuant()));
+			if(!O.isIsdone() && O.getO_id()>=0){
+				String d=(new java.text.SimpleDateFormat("MM-dd HH:mm").format(O.getTimestamp()));
+				gkernel.GetInfo(O.getG_id());
+				String guestname=gkernel.getFullname();
+				String itemname=kernel.FetchItem(O.getI_id()).getFullname();
+				arr.add(String.format("%8s * %-2d  %10s | %s",itemname,O.getQuant(),guestname,d));
+			}
 		}
 		list_order.setListData(arr.toArray(new String[1]));
 		
