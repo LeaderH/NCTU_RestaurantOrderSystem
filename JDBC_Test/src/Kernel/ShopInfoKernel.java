@@ -173,7 +173,19 @@ public class ShopInfoKernel extends MySQL{
 		}
 	}
 	
-	
+	public void updateOrderDone(int oid){
+		String selectSQL = "UPDATE `order` "+
+				"SET isdone='1'"+
+				" WHERE o_id="+oid+"";
+		try {
+			stat = con.createStatement();
+			stat.executeUpdate(selectSQL);
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+	}
 	/**
 	 * testing func
 	 * @param args
