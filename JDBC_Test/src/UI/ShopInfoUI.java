@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
+import java.awt.image.*;
 import javax.swing.border.LineBorder;
 
 public class ShopInfoUI {
@@ -65,6 +66,9 @@ public class ShopInfoUI {
 		update();
 	}
 	
+	/**
+	 * update all data with the db
+	 */
 	private void update(){
 		kernel.GetInfo(uid); //refresh
 		txtf_name.setText(kernel.getFullname());
@@ -80,7 +84,7 @@ public class ShopInfoUI {
 		orderList=kernel.getOrderList();
 		arr=new ArrayList<String>();
 		for(Order O : orderList){
-			if(O.getO_id()>=0){ //!O.isIsdone() && 
+			if(O.getO_id()>=0){
 				switch(order_display_type){
 				default: case Constants.ORDER_DISPALY_TYPE_UNDONE:
 					if(!O.isIsdone())
@@ -99,20 +103,24 @@ public class ShopInfoUI {
 			}
 		}
 		list_order.setListData(arr.toArray(new String[1]));
-		
 	}
 	
+	/**
+	 * Inner function to display items in the order list
+	 * @param O
+	 * @param arr
+	 * @return
+	 */
 	ArrayList<String> orderlistInnerFunc(Order O,ArrayList<String> arr){
 		String time=(new java.text.SimpleDateFormat("MM-dd HH:mm").format(O.getTimestamp()));
 		gkernel.GetInfo(O.getG_id());
 		String guestname=gkernel.getFullname();
 		String itemname=kernel.FetchItem(O.getI_id()).getFullname();
 		String done=(O.isIsdone())?"done":"undone";
-		arr.add(String.format("%8s * %-2d  %10s | %-20s  %s",itemname,O.getQuant(),guestname,time,done));
+		String s1=String.format("%20s * %-2d",itemname,O.getQuant());
+		arr.add(String.format("%30s %20s | %-20s %s",s1,guestname,time,done));
 		return arr;
 	}
-	
-	
 	
 	private void btn_detail_action(){
 		try{
@@ -225,19 +233,41 @@ public class ShopInfoUI {
 			order_display_type=Constants.ORDER_DISPALY_TYPE_NONE;
 		update();
 	}
-	
-	
+
 	
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 600, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		
+		JPanel panel_title = new JPanel();
+		frame.getContentPane().add(panel_title, BorderLayout.NORTH);
+		panel_title.setLayout(new BorderLayout(0, 0));
+		
 		JLabel lbl_title = new JLabel("Welcome");
+		panel_title.add(lbl_title);
 		lbl_title.setFont(new Font("Calibri", Font.BOLD, 24));
 		lbl_title.setHorizontalAlignment(SwingConstants.CENTER);
-		frame.getContentPane().add(lbl_title, BorderLayout.NORTH);
+		
+		JPanel panel_refreshbtn = new JPanel();
+		panel_title.add(panel_refreshbtn, BorderLayout.EAST);
+		
+		JButton btn_refresh = new JButton(new ImageIcon(
+						(new ImageIcon(
+								ShopInfoUI.class.getResource("/image/refresh-icon.png")
+								).getImage()
+						).getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH)
+					)
+				);
+		btn_refresh.setToolTipText("Refresh");
+		btn_refresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				update();
+			}
+		});
+		panel_refreshbtn.add(btn_refresh);
+		btn_refresh.setPreferredSize(new Dimension(30, 30));
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);

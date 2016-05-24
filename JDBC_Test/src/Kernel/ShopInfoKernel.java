@@ -92,6 +92,7 @@ public class ShopInfoKernel extends MySQL{
 				", available='"+avail+"'"+
 				" WHERE i_id="+I.getI_id()+"";
 		try {
+			if(con==null) reconnect();
 			stat = con.createStatement();
 			stat.executeUpdate(selectSQL);
 		} catch (SQLException e) {
@@ -105,6 +106,7 @@ public class ShopInfoKernel extends MySQL{
 		String insertdbSQL = "INSERT into item(s_id,fullname,value,description) " + 
 			      "VALUES ('"+sid+"','"+I.getFullname()+"','"+I.getValue()+"','"+I.getDescription()+"')"; 
 		try {
+			if(con==null) reconnect();
 			stat = con.createStatement();
 			stat.executeUpdate(insertdbSQL);
 		} catch (SQLException e) {
@@ -178,6 +180,7 @@ public class ShopInfoKernel extends MySQL{
 				"SET isdone='1'"+
 				" WHERE o_id="+oid+"";
 		try {
+			if(con==null) reconnect();
 			stat = con.createStatement();
 			stat.executeUpdate(selectSQL);
 		} catch (SQLException e) {
