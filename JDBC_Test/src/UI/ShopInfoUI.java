@@ -217,6 +217,8 @@ public class ShopInfoUI {
 	}
 	private void btn_orderdone_action(){
 		kernel.updateOrderDone(order_selected.getO_id());
+		btnDone.setVisible(false);
+		update();
 	}
 	
 	private void checkbox_action(){
@@ -224,13 +226,16 @@ public class ShopInfoUI {
 			if(chckbx_done.isSelected()){
 				order_display_type=Constants.ORDER_DISPALY_TYPE_ALL;
 			}
-			order_display_type=Constants.ORDER_DISPALY_TYPE_UNDONE;
+			else{
+				order_display_type=Constants.ORDER_DISPALY_TYPE_UNDONE;
+			}
 		}
 		else if(chckbx_done.isSelected()){
 			order_display_type=Constants.ORDER_DISPALY_TYPE_DONE;
 		}
-		else
+		else{
 			order_display_type=Constants.ORDER_DISPALY_TYPE_NONE;
+		}
 		update();
 	}
 
@@ -257,7 +262,7 @@ public class ShopInfoUI {
 						(new ImageIcon(
 								ShopInfoUI.class.getResource("/image/refresh-icon.png")
 								).getImage()
-						).getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH)
+						).getScaledInstance(45, 40, java.awt.Image.SCALE_SMOOTH)
 					)
 				);
 		btn_refresh.setToolTipText("Refresh");
@@ -478,7 +483,12 @@ public class ShopInfoUI {
 			}
 		});
 		
-		
+		chckbx_done.addItemListener(new ItemListener(){
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				checkbox_action();
+			}
+		});
 		
 		list_order = new JList<String>();
 		list_order.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
