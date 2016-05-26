@@ -31,11 +31,6 @@ public class GuestInfoUI {
 	private JButton enter_in_frame;
 	
 	
-	private JFrame optionJframe;
-	private JButton revisedata;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
 	
 	
 	/////
@@ -43,6 +38,7 @@ public class GuestInfoUI {
 	JTextArea abc;
 	private JTable table;
 	private DefaultTableModel data;
+	private JTable what_you_want_to_order;
 	
 	/////
 	
@@ -53,6 +49,7 @@ public class GuestInfoUI {
 	public GuestInfoUI(int uid) {
 		this.uid=uid;
 		kernel=new GuestInfoKernel();
+		
 		initialize();
 		update();
 	}
@@ -75,7 +72,7 @@ public class GuestInfoUI {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 868, 515);
+		frame.setBounds(100, 100, 1250, 700);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		lbl_title = new JLabel("Welcome!");
@@ -88,66 +85,6 @@ public class GuestInfoUI {
 		
 		JTabbedPane JTab_for_testing = new JTabbedPane(JTabbedPane.TOP);
 		panel_for_testing.add(JTab_for_testing);
-		
-		
-		JPanel user_information = new JPanel();
-		JTab_for_testing.addTab("user information", null, user_information, null);
-		user_information.setLayout(new GridLayout(5, 0, 0, 0));
-		
-		JPanel panel_4 = new JPanel();
-		user_information.add(panel_4);
-		
-		JLabel label = new JLabel("Fullname");
-		label.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_4.add(label);
-		
-		textField = new JTextField();
-		textField.setText((String) null);
-		textField.setEditable(true);
-		textField.setColumns(10);
-		panel_4.add(textField);
-		
-		JPanel panel_5 = new JPanel();
-		user_information.add(panel_5);
-		
-		JLabel label_1 = new JLabel("Gender");
-		panel_5.add(label_1);
-		
-		JRadioButton radioButton = new JRadioButton("Male", true);
-		panel_5.add(radioButton);
-		
-		JRadioButton radioButton_1 = new JRadioButton("Female", false);
-		panel_5.add(radioButton_1);
-		
-		JPanel panel_6 = new JPanel();
-		user_information.add(panel_6);
-		
-		JLabel label_2 = new JLabel("StudentID");
-		panel_6.add(label_2);
-		
-		textField_1 = new JTextField();
-		textField_1.setText((String) null);
-		textField_1.setEditable(true);
-		textField_1.setColumns(10);
-		panel_6.add(textField_1);
-		
-		JPanel panel_7 = new JPanel();
-		user_information.add(panel_7);
-		
-		JPanel panel_8 = new JPanel();
-		panel_7.add(panel_8);
-		
-		JLabel label_3 = new JLabel("Department");
-		panel_8.add(label_3);
-		
-		textField_2 = new JTextField();
-		textField_2.setText((String) null);
-		textField_2.setEditable(true);
-		textField_2.setColumns(10);
-		panel_8.add(textField_2);
-		
-		JButton button = new JButton("Enter");
-		panel_8.add(button);
 		
 		JPanel check_the_order = new JPanel();
 		JTab_for_testing.addTab("history order", null, check_the_order, null);
@@ -201,11 +138,67 @@ public class GuestInfoUI {
 		
 		
 		
-		JPanel panel_2 = new JPanel();
-		JTab_for_testing.addTab("New tab", null, panel_2, null);
+		JPanel new_order = new JPanel();
+		JTab_for_testing.addTab("I want to order new thing", null, new_order, null);
+		new_order.setLayout(new BorderLayout(0, 0));
 		
 		JLabel lblNewLabel_1 = new JLabel("random code sjakdlfjlsdjf;askjdf;j;alskjdf;lj");
-		panel_2.add(lblNewLabel_1);
+		new_order.add(lblNewLabel_1, BorderLayout.NORTH);
+		
+		JPanel new_order_center_board = new JPanel();
+		new_order.add(new_order_center_board, BorderLayout.CENTER);
+		new_order_center_board.setLayout(new GridLayout(1, 2, 0, 0));
+		
+		JPanel new_order_controlboard = new JPanel();
+		new_order_center_board.add(new_order_controlboard);
+		
+		
+		
+		//// new order table
+		DefaultTableModel what_you_want_to_order_DefaultTableModel = new DefaultTableModel();
+		what_you_want_to_order_DefaultTableModel.addColumn("Shop Name");
+		what_you_want_to_order_DefaultTableModel.addColumn("Item Name");
+		what_you_want_to_order_DefaultTableModel.addColumn("quantum");
+		
+		//what_you_want_to_order_DefaultTableModel.
+		
+		String Shop_name[] = {"shop1","shop2","shop3"};
+		JComboBox Shops =new JComboBox<String>(Shop_name);
+		Shops.setMaximumRowCount(Shop_name.length);
+		
+		
+		what_you_want_to_order_DefaultTableModel.addRow(new Object[]{new String[]{"A","B"},"2",true});
+		what_you_want_to_order = new JTable(what_you_want_to_order_DefaultTableModel);
+		JScrollPane what_you_want_to_order_Scroll = new JScrollPane(what_you_want_to_order);
+		
+		
+		
+		
+		new_order_controlboard.add(what_you_want_to_order_Scroll);
+		//// new order table
+
+		
+		
+		
+		JPanel new_order_confirm_board = new JPanel();
+		new_order_center_board.add(new_order_confirm_board);
+		new_order_confirm_board.setLayout(new GridLayout(2, 1, 0, 0));
+		
+		JPanel total_money = new JPanel();
+		new_order_confirm_board.add(total_money);
+		
+		JTextArea txtrTotalMoney = new JTextArea();
+		txtrTotalMoney.setText("total money\r\n?????-->????$\r\n?????-->????$      \r\n?????-->????$\r\n?????-->????$\r\n\r\ntotal -->????$\r\n");
+		total_money.add(txtrTotalMoney);
+		
+		JPanel confirm = new JPanel();
+		new_order_confirm_board.add(confirm);
+		
+		Button confirm_order = new Button("confirm");
+		confirm.add(confirm_order);
+		
+		Button update_order_list = new Button("update");
+		confirm.add(update_order_list);
 		
 		JPanel pan_info = new JPanel();
 		frame.getContentPane().add(pan_info, BorderLayout.CENTER);
@@ -269,7 +262,7 @@ public class GuestInfoUI {
 		
 		
 		
-//////  1.set 兩層          2.更新資料          3.放訂單
+///////////////////////////////////
 		enter_in_frame = new JButton("Enter");
 		pan_dept.add(enter_in_frame);
 
@@ -307,36 +300,6 @@ public class GuestInfoUI {
 		
 		
 		
-		frame.setVisible(false);
-		
-		
-		
-		optionJframe = new JFrame();
-		optionJframe.setBounds(100, 100, 450, 300);
-		
-		optionJframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		JPanel panel1 = new JPanel();
-		optionJframe.getContentPane().add(panel1, BorderLayout.CENTER);
-		panel1.setLayout(new GridLayout(3, 0, 0, 0));
-		
-		revisedata = new JButton("revise");
-		
-		
-		panel1.add(revisedata);
-		
-		
-		revisedata.addActionListener(///Anonymous inner class
-				new ActionListener(){
-					@Override
-					public void actionPerformed(ActionEvent event){
-						frame.setVisible(true);
-					}
-			}
-		);
-		//////  1.set 兩層          2.更新資料          3.放訂單     
-		
-		
 		
 		
 	}
@@ -348,8 +311,8 @@ public class GuestInfoUI {
 			public void run() {
 				try {
 					GuestInfoUI window = new GuestInfoUI(uid);
-					//window.frame.setVisible(true);
-					window.optionJframe.setVisible(true);///////////////////////revise
+					window.frame.setVisible(true);
+					
 					
 					window.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				} catch (Exception e) {
@@ -363,8 +326,6 @@ public class GuestInfoUI {
 			public void run() {
 				try {
 					GuestInfoUI window = new GuestInfoUI(1);
-					
-					window.optionJframe.setVisible(true);///////////////////////revise
 					
 					window.frame.setVisible(true);
 				} catch (Exception e) {
