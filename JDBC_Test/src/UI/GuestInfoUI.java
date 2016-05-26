@@ -2,10 +2,16 @@ package UI;
 
 import java.awt.EventQueue;
 import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.*;
 import Kernel.GuestInfoKernel;
 import Kernel.Constants;
+
+
+
 public class GuestInfoUI {
 	private int uid;
 	private GuestInfoKernel kernel;
@@ -35,7 +41,8 @@ public class GuestInfoUI {
 	/////
 	
 	JTextArea abc;
-	
+	private JTable table;
+	private DefaultTableModel data;
 	
 	/////
 	
@@ -81,6 +88,7 @@ public class GuestInfoUI {
 		
 		JTabbedPane JTab_for_testing = new JTabbedPane(JTabbedPane.TOP);
 		panel_for_testing.add(JTab_for_testing);
+		
 		
 		JPanel user_information = new JPanel();
 		JTab_for_testing.addTab("user information", null, user_information, null);
@@ -142,7 +150,7 @@ public class GuestInfoUI {
 		panel_8.add(button);
 		
 		JPanel check_the_order = new JPanel();
-		JTab_for_testing.addTab("New tab", null, check_the_order, null);
+		JTab_for_testing.addTab("history order", null, check_the_order, null);
 		check_the_order.setLayout(new BorderLayout(0, 0));
 		
 		JLabel lblNewLabel = new JLabel("here is the order");
@@ -152,12 +160,15 @@ public class GuestInfoUI {
 		
 		JPanel the_order = new JPanel();
 		check_the_order.add(the_order);
+		the_order.setLayout(new BorderLayout(0, 0));
 		
 		JTextArea textArea = new JTextArea();
-		the_order.add(textArea);
-		textArea.setText("sjlkafj;kla");
-		
+		textArea.setText("sjl;kla\n\n\n\n\n\n\n\n\n\nasdfa");
+		JScrollPane text_area_scroll = new JScrollPane(textArea);
 
+		the_order.add(text_area_scroll, BorderLayout.WEST);
+		
+		
 		abc =  textArea;/////don forget this variable
 		JButton btnGetData = new JButton("get data");
 		btnGetData.addActionListener(new ActionListener() {
@@ -166,7 +177,29 @@ public class GuestInfoUI {
 				abc.setText(tmp);
 			}
 		});
-		the_order.add(btnGetData);
+		
+		the_order.add(btnGetData, BorderLayout.EAST);
+		
+		
+		///table setting
+		
+		///data = new DefaultTableModel();
+		
+		///data.addColumn("o_id ");  data.addColumn("s_id  ");  data.addColumn("isdone ");  data.addColumn("timestmp ");  data.addColumn("i_id  ");  data.addColumn("quant ");
+		//data.addRow(new Object[]{"A","B","C","D","E","F"});
+		
+		table = new JTable(kernel.gettabledata());
+		//			 TableColumn
+		//the_order.add(table, BorderLayout.CENTER);
+		
+		
+		JScrollPane table_scroll = new JScrollPane(table);
+		
+		the_order.add(table_scroll,BorderLayout.CENTER);
+		//table_scroll.setVisible(false);
+		///table setting
+		
+		
 		
 		JPanel panel_2 = new JPanel();
 		JTab_for_testing.addTab("New tab", null, panel_2, null);
