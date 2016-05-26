@@ -71,6 +71,17 @@ public class ShopInfoUI {
 	 */
 	private void update(){
 		kernel.GetInfo(uid); //refresh
+		update_itemlist(true);
+		update_orderlist(true);
+	}
+	
+	private void update_itemlist(final boolean inforetrieved){
+		Thread t=new Thread(new Runnable(){
+			public void run(){
+				
+		if(!inforetrieved){
+			kernel.GetInfo(uid); //refresh
+		}
 		txtf_name.setText(kernel.getFullname());
 		txtf_loc.setText(kernel.getLocation());
 		itemList=kernel.getItemList();
@@ -81,8 +92,19 @@ public class ShopInfoUI {
 		}
 		list_item.setListData(arr.toArray(new String[1]));
 		
+			}
+		});
+		t.start();
+	}
+	
+	private void update_orderlist(final boolean inforetrieved){
+		Thread t=new Thread(new Runnable(){
+			public void run(){
+		if(!inforetrieved){
+			kernel.GetInfo(uid); //refresh
+		}
 		orderList=kernel.getOrderList();
-		arr=new ArrayList<String>();
+		ArrayList<String> arr=new ArrayList<String>();
 		for(Order O : orderList){
 			if(O.getO_id()>=0){
 				switch(order_display_type){
@@ -103,6 +125,10 @@ public class ShopInfoUI {
 			}
 		}
 		list_order.setListData(arr.toArray(new String[1]));
+		
+			}
+		});
+		t.start();
 	}
 	
 	/**
@@ -134,13 +160,13 @@ public class ShopInfoUI {
 		}
 	}
 	private void btn_edit_action(){
-		Item item_edited=new Item(item_selected.getI_id(),item_selected.getS_id(),
+		final Item item_edited=new Item(item_selected.getI_id(),item_selected.getS_id(),
 				txtf_item_name.getText(),Integer.parseInt(txtf_item_value.getText()),textArea_item_des.getText(),
 				true
 				);
 		//Item(int iid,int sid,String name,int v,String des,boolean available);
 		kernel.updateItemInfo(item_edited);
-		update();
+		update_itemlist(false);
 	}
 	private void btn_add_action(){
 		panel_item_interact.setVisible(true);
@@ -159,7 +185,7 @@ public class ShopInfoUI {
 				);
 		//Item(int iid,int sid,String name,int v,String des,boolean available);
 		kernel.insertItem(item_new);
-		update();
+		update_itemlist(false);
 	}
 	private void btn_delete_action(){
 		try{
@@ -173,7 +199,7 @@ public class ShopInfoUI {
 						);
 				//Item(int iid,int sid,String name,int v,String des,boolean available);
 				kernel.updateItemInfo(item_edited);
-				update();
+				update_itemlist(false);
 			}
 		}catch(IndexOutOfBoundsException e){
 			JOptionPane.showMessageDialog(frame, "Please select an item", "Warning", JOptionPane.ERROR_MESSAGE);
@@ -218,7 +244,7 @@ public class ShopInfoUI {
 	private void btn_orderdone_action(){
 		kernel.updateOrderDone(order_selected.getO_id());
 		btnDone.setVisible(false);
-		update();
+		update_orderlist(false);
 	}
 	
 	private void checkbox_action(){
@@ -236,7 +262,7 @@ public class ShopInfoUI {
 		else{
 			order_display_type=Constants.ORDER_DISPALY_TYPE_NONE;
 		}
-		update();
+		update_orderlist(false);
 	}
 
 	
