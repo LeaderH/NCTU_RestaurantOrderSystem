@@ -4,18 +4,24 @@ import java.sql.*;
 import java.util.*;
 
 import db.MySQL;
+import Kernel.Constants.Item;
+import Kernel.Constants.Order;
 
 public class ShopInfoKernel extends MySQL{
 	private int sid;
 	private String fullname;
 	private String location;
 	private Item[] itemList;
+	private Order[] orderList;
 	
+	
+
 	private void varinit(){
 		sid=-1;
 		fullname=null;
 		location=null;
 		itemList=new Item[1];
+		orderList=new Order[1];
 	}
 	
 	public ShopInfoKernel(){
@@ -28,6 +34,7 @@ public class ShopInfoKernel extends MySQL{
 		String selectSQL = "SELECT s_id,fullname,location FROM shop "+
 				"WHERE uid='"+uid+"'";
 		try {
+			if(con==null) reconnect();
 			stat = con.createStatement();
 			rs = stat.executeQuery(selectSQL);
 			if(rs.next()) {
@@ -36,6 +43,7 @@ public class ShopInfoKernel extends MySQL{
 				fullname=rs.getString("fullname");
 				location=rs.getString("location");
 				FetchItemList();
+				FetchOrderList();
 			}
 			else{
 				varinit();
@@ -53,6 +61,7 @@ public class ShopInfoKernel extends MySQL{
 				"WHERE s_id='"+sid+"'";
 		ArrayList<Item> L=new ArrayList<Item>();
 		try {
+			if(con==null) reconnect();
 			stat = con.createStatement();
 			rs = stat.executeQuery(selectSQL);
 			while(rs.next()) {
@@ -75,10 +84,12 @@ public class ShopInfoKernel extends MySQL{
 	}
 	
 	public void updateItemInfo(Item I){
+		int avail=I.isAvailable()?1:0;
 		String selectSQL = "UPDATE item "+
 				"SET fullname='"+I.getFullname()+"'"+
 				", value="+I.getValue()+
 				", description='"+I.getDescription()+"'"+
+				", available='"+avail+"'"+
 				" WHERE i_id="+I.getI_id()+"";
 		try {
 			stat = con.createStatement();
@@ -103,6 +114,42 @@ public class ShopInfoKernel extends MySQL{
 		}
 	}
 	
+	public void FetchOrderList(){
+		//String selectSQL = "SELECT o_id,g_id,isdone,timestmp,i_id,quant FROM `order` "+
+		String selectSQL = "SELECT * FROM `order` "+
+				"WHERE s_id='"+sid+"'";
+				
+		ArrayList<Order> L=new ArrayList<Order>();
+		//String selectSQL = "SELECT * FROM `Order` WHERE 1";
+				//"WHERE s_id='1'";
+		try {
+			if(con==null) reconnect();
+			stat = con.createStatement();
+			rs = stat.executeQuery(selectSQL);
+			
+			while(rs.next()) {
+				Order I=new Order(
+						rs.getInt("o_id"),
+						rs.getInt("g_id"),
+						sid,
+						rs.getInt("i_id"),
+						rs.getInt("quant"),
+						rs.getBoolean("isdone"),
+						rs.getTimestamp("timestmp")
+						);
+				//Order(int oid,int gid,int sid,int iid,
+				//		int quant,boolean isdone,Timestamp ts)
+				L.add(I);
+			}
+			orderList=L.toArray(orderList);
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+	}
+	
+	
 	/**
 	 * testing func
 	 * @param args
@@ -110,10 +157,7 @@ public class ShopInfoKernel extends MySQL{
  	public static void main(String[] args) {
 		ShopInfoKernel test = new ShopInfoKernel();
 		test.GetInfo(3);
-		Item[] itemlist=test.getItemList();
-		for(Item I:itemlist){
-			System.out.println(I.getFullname());
-		}
+		test.FetchOrderList();
 	}
 	
 	public int getSid() {
@@ -128,65 +172,7 @@ public class ShopInfoKernel extends MySQL{
 	public Item[] getItemList() {
 		return itemList;
 	}
-	
-	public static class Item{
-		private int i_id;
-		private int s_id;
-		private String fullname;
-		private int value;
-		private String description;
-		private boolean available;
-		
-		private void varinit(){
-			i_id=-1;
-			s_id=-1;
-			value=0;
-			fullname=null;
-			description=null;
-		}
-		public Item(int iid,int sid,String name,int v,String des,boolean available){
-			i_id=iid;
-			s_id=sid;
-			value=v;
-			fullname=name;
-			description=des;
-			this.available=available;
-		}
-		public Item(){
-			varinit();
-		}
-		public boolean isAvailable() {
-			return available;
-		}
-		public int getI_id() {
-			return i_id;
-		}
-		public void setI_id(int i_id) {
-			this.i_id = i_id;
-		}
-		public int getS_id() {
-			return s_id;
-		}
-		public void setS_id(int s_id) {
-			this.s_id = s_id;
-		}
-		public String getFullname() {
-			return fullname;
-		}
-		public void setFullname(String fullname) {
-			this.fullname = fullname;
-		}
-		public int getValue() {
-			return value;
-		}
-		public void setValue(int value) {
-			this.value = value;
-		}
-		public String getDescription() {
-			return description;
-		}
-		public void setDescription(String description) {
-			this.description = description;
-		}
+	public Order[] getOrderList() {
+		return orderList;
 	}
 }
