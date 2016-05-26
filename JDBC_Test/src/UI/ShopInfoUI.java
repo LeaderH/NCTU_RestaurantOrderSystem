@@ -5,11 +5,16 @@ import java.awt.*;
 import java.util.*;
 
 import Kernel.ShopInfoKernel;
+import Kernel.GuestInfoKernel;
 import Kernel.Constants.Item;
 import Kernel.Constants.Order;
+import Kernel.Constants;
 import javax.swing.border.CompoundBorder;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
+import java.awt.image.*;
 import javax.swing.border.LineBorder;
 
 public class ShopInfoUI {
@@ -36,9 +41,20 @@ public class ShopInfoUI {
 	private JTextField txtf_ordertime;
 	private JTextField txtf_itemrequest;
 	private JTextField txtf_total;
+	private JButton btnClose;
+	private JButton btnDone;
 	private JPanel panel_order_interact;
 	private Order[] orderList;
 	private Order order_selected;
+	
+	
+	private JCheckBox chckbx_undone;
+	private JCheckBox chckbx_done;
+	int order_display_type=Constants.ORDER_DISPALY_TYPE_UNDONE;
+	
+	private final GuestInfoKernel gkernel=new GuestInfoKernel();
+	
+	
 	/**
 	 * Create the application.
 	 */
@@ -50,6 +66,9 @@ public class ShopInfoUI {
 		update();
 	}
 	
+	/**
+	 * update all data with the db
+	 */
 	private void update(){
 		kernel.GetInfo(uid); //refresh
 		txtf_name.setText(kernel.getFullname());
@@ -65,11 +84,42 @@ public class ShopInfoUI {
 		orderList=kernel.getOrderList();
 		arr=new ArrayList<String>();
 		for(Order O : orderList){
-			if(!O.isIsdone() && O.getO_id()>=0)
-				arr.add(String.format("%-2d %-2d * %-2d",O.getG_id(),O.getI_id(),O.getQuant()));
+			if(O.getO_id()>=0){
+				switch(order_display_type){
+				default: case Constants.ORDER_DISPALY_TYPE_UNDONE:
+					if(!O.isIsdone())
+						orderlistInnerFunc(O,arr);
+					break;
+				case Constants.ORDER_DISPALY_TYPE_DONE:
+					if(O.isIsdone()) 
+						orderlistInnerFunc(O,arr);
+					break;
+				case Constants.ORDER_DISPALY_TYPE_ALL:
+					orderlistInnerFunc(O,arr);
+					break;
+				case Constants.ORDER_DISPALY_TYPE_NONE:
+					break;
+				}
+			}
 		}
 		list_order.setListData(arr.toArray(new String[1]));
-		
+	}
+	
+	/**
+	 * Inner function to display items in the order list
+	 * @param O
+	 * @param arr
+	 * @return
+	 */
+	ArrayList<String> orderlistInnerFunc(Order O,ArrayList<String> arr){
+		String time=(new java.text.SimpleDateFormat("MM-dd HH:mm").format(O.getTimestamp()));
+		gkernel.GetInfo(O.getG_id());
+		String guestname=gkernel.getFullname();
+		String itemname=kernel.FetchItem(O.getI_id()).getFullname();
+		String done=(O.isIsdone())?"done":"undone";
+		String s1=String.format("%20s * %-2d",itemname,O.getQuant());
+		arr.add(String.format("%30s %20s | %-20s %s",s1,guestname,time,done));
+		return arr;
 	}
 	
 	private void btn_detail_action(){
@@ -135,17 +185,94 @@ public class ShopInfoUI {
 		btnEdit.setVisible(true);
 	}
 	
+	private void btn_orderdetail_action(){
+		try{
+			panel_order_interact.setVisible(true);
+			
+			order_selected=orderList[list_order.getSelectedIndex()];
+			
+			String d=(new java.text.SimpleDateFormat("MM-dd HH:mm").format(order_selected.getTimestamp()));
+			gkernel.GetInfo(order_selected.getG_id());
+			String guestname=gkernel.getFullname();
+			String itemname=kernel.FetchItem(order_selected.getI_id()).getFullname();
+			int quant=order_selected.getQuant();
+			int value=kernel.FetchItem(order_selected.getI_id()).getValue()*quant;
+			
+			txtf_orderer.setText(guestname);
+			txtf_ordertime.setText(d);
+			txtf_itemrequest.setText(String.format("%8s * %-2d", itemname,quant));
+			txtf_total.setText(String.valueOf(value));
+			
+			if(order_selected.isIsdone())
+				btnDone.setVisible(false);
+			else
+				btnDone.setVisible(true);
+				
+		}catch(IndexOutOfBoundsException e){
+			panel_order_interact.setVisible(false);
+		}
+	}
+	private void btn_orderclose_action(){
+		panel_order_interact.setVisible(false);
+	}
+	private void btn_orderdone_action(){
+		kernel.updateOrderDone(order_selected.getO_id());
+		btnDone.setVisible(false);
+		update();
+	}
+	
+	private void checkbox_action(){
+		if(chckbx_undone.isSelected()){
+			if(chckbx_done.isSelected()){
+				order_display_type=Constants.ORDER_DISPALY_TYPE_ALL;
+			}
+			else{
+				order_display_type=Constants.ORDER_DISPALY_TYPE_UNDONE;
+			}
+		}
+		else if(chckbx_done.isSelected()){
+			order_display_type=Constants.ORDER_DISPALY_TYPE_DONE;
+		}
+		else{
+			order_display_type=Constants.ORDER_DISPALY_TYPE_NONE;
+		}
+		update();
+	}
+
 	
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 600, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		
+		JPanel panel_title = new JPanel();
+		frame.getContentPane().add(panel_title, BorderLayout.NORTH);
+		panel_title.setLayout(new BorderLayout(0, 0));
+		
 		JLabel lbl_title = new JLabel("Welcome");
+		panel_title.add(lbl_title);
 		lbl_title.setFont(new Font("Calibri", Font.BOLD, 24));
 		lbl_title.setHorizontalAlignment(SwingConstants.CENTER);
-		frame.getContentPane().add(lbl_title, BorderLayout.NORTH);
+		
+		JPanel panel_refreshbtn = new JPanel();
+		panel_title.add(panel_refreshbtn, BorderLayout.EAST);
+		
+		JButton btn_refresh = new JButton(new ImageIcon(
+						(new ImageIcon(
+								ShopInfoUI.class.getResource("/image/refresh-icon.png")
+								).getImage()
+						).getScaledInstance(45, 40, java.awt.Image.SCALE_SMOOTH)
+					)
+				);
+		btn_refresh.setToolTipText("Refresh");
+		btn_refresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				update();
+			}
+		});
+		panel_refreshbtn.add(btn_refresh);
+		btn_refresh.setPreferredSize(new Dimension(30, 30));
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -331,19 +458,59 @@ public class ShopInfoUI {
 		panel_order.add(panel_orderlist);
 		panel_orderlist.setLayout(new BorderLayout(0, 0));
 		
-		JLabel lblOrderlist = new JLabel("Order List");
-		lblOrderlist.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_orderlist.add(lblOrderlist, BorderLayout.NORTH);
+		JPanel panel_orderlistbar = new JPanel();
+		panel_orderlist.add(panel_orderlistbar, BorderLayout.NORTH);
+		panel_orderlistbar.setLayout(new BoxLayout(panel_orderlistbar, BoxLayout.X_AXIS));
 		
+		JLabel lblOrderlist = new JLabel("Order List");
+		panel_orderlistbar.add(lblOrderlist);
+		lblOrderlist.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		JPanel panel_order_chkbox = new JPanel();
+		panel_orderlistbar.add(panel_order_chkbox);
+		
+		chckbx_undone = new JCheckBox("Undone");
+		chckbx_undone.setSelected(true);
+		panel_order_chkbox.add(chckbx_undone);
+		
+		chckbx_done = new JCheckBox("Done");
+		panel_order_chkbox.add(chckbx_done);
+		
+		chckbx_undone.addItemListener(new ItemListener(){
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				checkbox_action();
+			}
+		});
+		
+		chckbx_done.addItemListener(new ItemListener(){
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				checkbox_action();
+			}
+		});
 		
 		list_order = new JList<String>();
 		list_order.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scrollPane_1 = new JScrollPane(list_order);
 		panel_orderlist.add(scrollPane_1, BorderLayout.CENTER);
 		
+		JPanel panel_orderbtns = new JPanel();
+		panel_orderlist.add(panel_orderbtns, BorderLayout.SOUTH);
+		
+		JButton btn_orderdetail = new JButton("Detail");
+		btn_orderdetail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_orderdetail_action();
+			}
+		});
+		panel_orderbtns.add(btn_orderdetail);
+		
 		panel_order_interact = new JPanel();
+		panel_order_interact.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_order.add(panel_order_interact);
 		panel_order_interact.setLayout(new BorderLayout(0, 0));
+		panel_order_interact.setVisible(false);
 		
 		JLabel lblOrderDetail = new JLabel("Order Detail");
 		lblOrderDetail.setHorizontalAlignment(SwingConstants.CENTER);
@@ -361,6 +528,7 @@ public class ShopInfoUI {
 		panel_orderer.add(lblOrderer);
 		
 		txtf_orderer = new JTextField();
+		txtf_orderer.setEditable(false);
 		panel_orderer.add(txtf_orderer);
 		txtf_orderer.setColumns(10);
 		
@@ -371,6 +539,7 @@ public class ShopInfoUI {
 		panel_order_time.add(lblOrdertime);
 		
 		txtf_ordertime = new JTextField();
+		txtf_ordertime.setEditable(false);
 		panel_order_time.add(txtf_ordertime);
 		txtf_ordertime.setColumns(10);
 		
@@ -381,6 +550,7 @@ public class ShopInfoUI {
 		panel_orderitem.add(lblItemRequest);
 		
 		txtf_itemrequest = new JTextField();
+		txtf_itemrequest.setEditable(false);
 		panel_orderitem.add(txtf_itemrequest);
 		txtf_itemrequest.setColumns(10);
 		
@@ -391,17 +561,31 @@ public class ShopInfoUI {
 		panel_value.add(lblTotal);
 		
 		txtf_total = new JTextField();
+		txtf_total.setEditable(false);
 		panel_value.add(txtf_total);
 		txtf_total.setColumns(10);
 		
 		JPanel panel_order_btns = new JPanel();
 		panel_order_details.add(panel_order_btns);
 		
-		JButton btnDone = new JButton("Done");
+		btnDone = new JButton("Done");
+		btnDone.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_orderdone_action();
+			}
+		});
 		panel_order_btns.add(btnDone);
 		
-		JButton btnClose = new JButton("Close");
+		btnClose = new JButton("Close");
+		btnClose.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_orderclose_action();
+			}
+		});
 		panel_order_btns.add(btnClose);
+		
+		JPanel panel = new JPanel();
+		panel_order_interact.add(panel, BorderLayout.SOUTH);
 	}
 	
 	/**

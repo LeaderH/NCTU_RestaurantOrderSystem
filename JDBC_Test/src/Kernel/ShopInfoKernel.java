@@ -92,6 +92,7 @@ public class ShopInfoKernel extends MySQL{
 				", available='"+avail+"'"+
 				" WHERE i_id="+I.getI_id()+"";
 		try {
+			if(con==null) reconnect();
 			stat = con.createStatement();
 			stat.executeUpdate(selectSQL);
 		} catch (SQLException e) {
@@ -105,6 +106,7 @@ public class ShopInfoKernel extends MySQL{
 		String insertdbSQL = "INSERT into item(s_id,fullname,value,description) " + 
 			      "VALUES ('"+sid+"','"+I.getFullname()+"','"+I.getValue()+"','"+I.getDescription()+"')"; 
 		try {
+			if(con==null) reconnect();
 			stat = con.createStatement();
 			stat.executeUpdate(insertdbSQL);
 		} catch (SQLException e) {
@@ -114,14 +116,37 @@ public class ShopInfoKernel extends MySQL{
 		}
 	}
 	
+	public Item FetchItem(int iid){
+		Item I=new Item();
+		String selectSQL = "SELECT fullname,value,description,available FROM item "+
+				"WHERE i_id='"+iid+"'";
+		try {
+			if(con==null) reconnect();
+			stat = con.createStatement();
+			rs = stat.executeQuery(selectSQL);
+			if(rs.next()) {
+				I=new Item(
+						iid,
+						sid,
+						rs.getString("fullname"),
+						rs.getInt("value"),
+						rs.getString("description"),
+						rs.getBoolean("available")
+						);
+			}
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+		return I;
+	}
+	
 	public void FetchOrderList(){
-		//String selectSQL = "SELECT o_id,g_id,isdone,timestmp,i_id,quant FROM `order` "+
 		String selectSQL = "SELECT * FROM `order` "+
 				"WHERE s_id='"+sid+"'";
 				
 		ArrayList<Order> L=new ArrayList<Order>();
-		//String selectSQL = "SELECT * FROM `Order` WHERE 1";
-				//"WHERE s_id='1'";
 		try {
 			if(con==null) reconnect();
 			stat = con.createStatement();
@@ -137,6 +162,7 @@ public class ShopInfoKernel extends MySQL{
 						rs.getBoolean("isdone"),
 						rs.getTimestamp("timestmp")
 						);
+				//System.out.println(rs.getInt("i_id"));
 				//Order(int oid,int gid,int sid,int iid,
 				//		int quant,boolean isdone,Timestamp ts)
 				L.add(I);
@@ -149,7 +175,20 @@ public class ShopInfoKernel extends MySQL{
 		}
 	}
 	
-	
+	public void updateOrderDone(int oid){
+		String selectSQL = "UPDATE `order` "+
+				"SET isdone='1'"+
+				" WHERE o_id="+oid+"";
+		try {
+			if(con==null) reconnect();
+			stat = con.createStatement();
+			stat.executeUpdate(selectSQL);
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+	}
 	/**
 	 * testing func
 	 * @param args

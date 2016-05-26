@@ -9,8 +9,12 @@ public class Constants {
 	//guest gender
 	public static final boolean MALE=false;
 	public static final boolean FEMALE=true;
+	//guest orderselection
+	public static final int ORDER_DISPALY_TYPE_UNDONE=0;
+	public static final int ORDER_DISPALY_TYPE_DONE=1;
+	public static final int ORDER_DISPALY_TYPE_ALL=2;
+	public static final int ORDER_DISPALY_TYPE_NONE=3;
 	
-
 	public static class Order{
 		private int o_id;
 		private int g_id;
@@ -76,6 +80,7 @@ public class Constants {
 			o_id=oid;
 			g_id=gid;
 			s_id=sid;
+			i_id=iid;
 			this.quant=quant;
 			this.isdone=isdone;
 			timestamp=ts;
