@@ -18,10 +18,11 @@ import java.awt.image.*;
 import javax.swing.border.LineBorder;
 
 public class ShopInfoUI {
+	private static final String titleName="ShopInfo";
 	private int uid;
 	private Item[] itemList;
 	private ShopInfoKernel kernel;
-	private JFrame frame;
+	private JFrame frmShopinfo;
 	private JTextField txtf_name;
 	private JTextField txtf_loc;
 	private JList<String>	list_item;
@@ -79,6 +80,8 @@ public class ShopInfoUI {
 		Thread t=new Thread(new Runnable(){
 			public void run(){
 				
+		String title=frmShopinfo.getTitle()+"--loading(item)";
+		frmShopinfo.setTitle(title);		
 		if(!inforetrieved){
 			kernel.GetInfo(uid); //refresh
 		}
@@ -91,6 +94,7 @@ public class ShopInfoUI {
 				arr.add(String.format("%s(%d)", I.getFullname(),I.getValue()));
 		}
 		list_item.setListData(arr.toArray(new String[1]));
+		frmShopinfo.setTitle(titleName);
 		
 			}
 		});
@@ -100,6 +104,8 @@ public class ShopInfoUI {
 	private void update_orderlist(final boolean inforetrieved){
 		Thread t=new Thread(new Runnable(){
 			public void run(){
+		String title=frmShopinfo.getTitle()+"--loading(order)";
+		frmShopinfo.setTitle(title);
 		if(!inforetrieved){
 			kernel.GetInfo(uid); //refresh
 		}
@@ -125,7 +131,7 @@ public class ShopInfoUI {
 			}
 		}
 		list_order.setListData(arr.toArray(new String[1]));
-		
+		frmShopinfo.setTitle(titleName);
 			}
 		});
 		t.start();
@@ -190,7 +196,7 @@ public class ShopInfoUI {
 	private void btn_delete_action(){
 		try{
 			item_selected=itemList[list_item.getSelectedIndex()];
-			int res=JOptionPane.showConfirmDialog(frame,"Are you sure to delete item "+item_selected.getFullname()+"?",
+			int res=JOptionPane.showConfirmDialog(frmShopinfo,"Are you sure to delete item "+item_selected.getFullname()+"?",
 					"Confirm",JOptionPane.YES_NO_OPTION);
 			if(res==JOptionPane.YES_OPTION){
 				Item item_edited=new Item(item_selected.getI_id(),item_selected.getS_id(),
@@ -202,7 +208,7 @@ public class ShopInfoUI {
 				update_itemlist(false);
 			}
 		}catch(IndexOutOfBoundsException e){
-			JOptionPane.showMessageDialog(frame, "Please select an item", "Warning", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frmShopinfo, "Please select an item", "Warning", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	private void btn_cancel_action(){
@@ -267,13 +273,14 @@ public class ShopInfoUI {
 
 	
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 600, 400);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(new BorderLayout(0, 0));
+		frmShopinfo = new JFrame();
+		frmShopinfo.setTitle(titleName);
+		frmShopinfo.setBounds(100, 100, 600, 400);
+		frmShopinfo.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmShopinfo.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_title = new JPanel();
-		frame.getContentPane().add(panel_title, BorderLayout.NORTH);
+		frmShopinfo.getContentPane().add(panel_title, BorderLayout.NORTH);
 		panel_title.setLayout(new BorderLayout(0, 0));
 		
 		JLabel lbl_title = new JLabel("Welcome");
@@ -301,7 +308,7 @@ public class ShopInfoUI {
 		btn_refresh.setPreferredSize(new Dimension(30, 30));
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
+		frmShopinfo.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		
 
 	//tab info
@@ -318,7 +325,7 @@ public class ShopInfoUI {
 		JPanel panel_detail = new JPanel();
 		panel_info.add(panel_detail, BorderLayout.CENTER);
 		GridBagLayout gbl_panel_detail = new GridBagLayout();
-		gbl_panel_detail.columnWidths = new int[] { frame.getWidth(), 0 };
+		gbl_panel_detail.columnWidths = new int[] { frmShopinfo.getWidth(), 0 };
 		gbl_panel_detail.rowHeights = new int[] { 35, 35, 0 };
 		gbl_panel_detail.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
 		gbl_panel_detail.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
@@ -622,8 +629,8 @@ public class ShopInfoUI {
 			public void run() {
 				try {
 					ShopInfoUI window = new ShopInfoUI(uid);
-					window.frame.setVisible(true);
-					window.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					window.frmShopinfo.setVisible(true);
+					window.frmShopinfo.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -638,7 +645,7 @@ public class ShopInfoUI {
 			public void run() {
 				try {
 					ShopInfoUI window = new ShopInfoUI(3); //3 is just an example
-					window.frame.setVisible(true);
+					window.frmShopinfo.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
