@@ -7,9 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement; 
 
 public class MySQL {
-	private final String db_name="jdbc:mysql://stevie.heliohost.org/leader_testdb1";
-	private final String db_user="leader_normal";
-	private final String db_pwd="normal";
 	protected static Connection con = null; //Database objects 
 	protected Statement stat = null; //執行,傳入之sql為完整字串 
 	protected ResultSet rs = null; //結果集 
@@ -27,17 +24,7 @@ public class MySQL {
 	}
 	
 	public Connection reconnect(){
-		try {
-			Class.forName("com.mysql.jdbc.Driver"); 
-		      //註冊driver 
-		    con = DriverManager.getConnection(db_name,db_user,db_pwd); 
-		      //取得connection
-		} catch (ClassNotFoundException e) {
-			System.out.println("DriverClassNotFound :" + e.toString());
-		} // 有可能會產生sqlexception
-		catch (SQLException x) {
-			System.out.println("Exception :" + x.toString());
-		}
+		con=SingletonConnect.getInstance();
 		return con;
 	}
 	
@@ -78,15 +65,25 @@ public class MySQL {
 				pst.close(); 
 				pst = null; 
 			} 
-			if(con!=null){
-				con.close();
-				con=null;
-			}
 		} 
 		catch(SQLException e) { 
 			System.out.println("Close Exception :" + e.toString()); 
 		} 
 	} 
+	
+	@Override
+	protected void finalize(){
+		if(con!=null){
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			con=null;
+		}
+	}
+	
 	public Connection getCon() {
 		return con;
 	}
