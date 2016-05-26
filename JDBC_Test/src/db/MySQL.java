@@ -20,6 +20,13 @@ public class MySQL {
 	 * Constructor
 	 */
 	public MySQL() {
+		reconnect();
+	}
+	public MySQL(Connection c) {
+		con = c;
+	}
+	
+	public Connection reconnect(){
 		try {
 			Class.forName("com.mysql.jdbc.Driver"); 
 		      //µù¥Udriver 
@@ -31,12 +38,10 @@ public class MySQL {
 		catch (SQLException x) {
 			System.out.println("Exception :" + x.toString());
 		}
-	}
-	public MySQL(Connection c) {
-		con = c;
+		return con;
 	}
 	
-	public void createTable(String createdbSQL) {
+ 	public void createTable(String createdbSQL) {
 		try {
 			stat = con.createStatement();
 			stat.executeUpdate(createdbSQL);
@@ -73,6 +78,10 @@ public class MySQL {
 				pst.close(); 
 				pst = null; 
 			} 
+			if(con!=null){
+				con.close();
+				con=null;
+			}
 		} 
 		catch(SQLException e) { 
 			System.out.println("Close Exception :" + e.toString()); 
