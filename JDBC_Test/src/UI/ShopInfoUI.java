@@ -13,6 +13,7 @@ import javax.swing.border.CompoundBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import java.awt.image.*;
 import javax.swing.border.LineBorder;
@@ -271,6 +272,10 @@ public class ShopInfoUI {
 		update_orderlist(false);
 	}
 
+	private void btn_logout_action(){
+		frmShopinfo.dispatchEvent(new WindowEvent(frmShopinfo, WindowEvent.WINDOW_CLOSING));
+		LoginUI.main(new String[0]);
+	}
 	
 	private void initialize() {
 		frmShopinfo = new JFrame();
@@ -306,6 +311,23 @@ public class ShopInfoUI {
 		});
 		panel_refreshbtn.add(btn_refresh);
 		btn_refresh.setPreferredSize(new Dimension(30, 30));
+		
+		JButton btn_Logout = new JButton(new ImageIcon(
+				(new ImageIcon(
+						ShopInfoUI.class.getResource("/image/logout-icon.png")
+						).getImage()
+				).getScaledInstance(30, 25, java.awt.Image.SCALE_SMOOTH)
+			)
+		);
+		btn_Logout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_logout_action();
+			}
+		});
+		btn_Logout.setToolTipText("Logout");
+		panel_refreshbtn.add(btn_Logout);
+		btn_Logout.setPreferredSize(new Dimension(30, 30));
+		
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frmShopinfo.getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -646,6 +668,7 @@ public class ShopInfoUI {
 				try {
 					ShopInfoUI window = new ShopInfoUI(3); //3 is just an example
 					window.frmShopinfo.setVisible(true);
+					window.frmShopinfo.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

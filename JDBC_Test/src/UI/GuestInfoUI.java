@@ -462,6 +462,7 @@ public class GuestInfoUI {
 					GuestInfoUI window = new GuestInfoUI(1);
 					
 					window.frame.setVisible(true);
+					window.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
