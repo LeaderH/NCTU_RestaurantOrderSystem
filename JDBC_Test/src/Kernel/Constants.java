@@ -99,6 +99,11 @@ public class Constants {
 		private String description;
 		private boolean available;
 		
+		@Override
+		public String toString(){
+			return fullname;
+		}
+		
 		private void varinit(){
 			i_id=-1;
 			s_id=-1;
@@ -117,6 +122,7 @@ public class Constants {
 		public Item(){
 			varinit();
 		}
+		
 		public boolean isAvailable() {
 			return available;
 		}
