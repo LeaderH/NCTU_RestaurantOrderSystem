@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.awt.*;
 import javax.swing.*; //JFrame
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
 import Kernel.Constants;
@@ -39,7 +40,7 @@ public class LoginUI {
 		
 		JPanel panel = new JPanel();
 		frame.getContentPane().add(panel, BorderLayout.CENTER);
-		panel.setLayout(new GridLayout(2, 0, 0, 0));
+		panel.setLayout(new GridLayout(4, 0, 0, 0));
 		
 		JPanel pan_title = new JPanel();
 		
@@ -75,16 +76,28 @@ public class LoginUI {
 		pan_pwd.add(txtf_pwd);
 		txtf_pwd.setColumns(10);
 		
+		JPanel panel_space = new JPanel();
+		panel.add(panel_space);
+		
 		JPanel pan_sub = new JPanel();
-		frame.getContentPane().add(pan_sub, BorderLayout.SOUTH);
+		panel.add(pan_sub);
 		
 		btn_submit = new JButton("Submit");
+		btn_submit.setToolTipText("Login");
 		btn_submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				LoginProcess();
 			}
 		});
 		pan_sub.add(btn_submit);
+		
+		JButton btn_Register = new JButton("Register");
+		btn_Register.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btn_Register.setToolTipText("New to this? Welcome");
+		pan_sub.add(btn_Register);
 	}
 
 	private void LoginProcess(){
@@ -108,6 +121,7 @@ public class LoginUI {
 		}else{
 			JOptionPane.showMessageDialog(frame, "Login Falied", "Warning", JOptionPane.ERROR_MESSAGE);
 		}
+		frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 	}
 	/**
 	 * Launch the application.
