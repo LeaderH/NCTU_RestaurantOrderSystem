@@ -12,6 +12,7 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
 import Kernel.GuestInfoKernel;
+import Kernel.ShopInfoKernel;
 import Kernel.Constants;
 
 
@@ -28,7 +29,7 @@ public class GuestInfoUI {
 	private JRadioButton rdbtnMale;
 	private JRadioButton rdbtnFemale;
 	
-	
+	private ShopInfoKernel skernel;
 	
 	
 /////my revise
@@ -43,6 +44,12 @@ public class GuestInfoUI {
 	private JTable table;
 	private DefaultTableModel data;
 	private JTable what_you_want_to_order;
+	private JTextField money_1;
+	private JTextField amount_1;
+	
+	JComboBox <String> shop_comboBox_1;
+	JComboBox <String> item_comboBox_1;
+	
 	
 	/////
 	
@@ -53,6 +60,8 @@ public class GuestInfoUI {
 	public GuestInfoUI(int uid) {
 		this.uid=uid;
 		kernel=new GuestInfoKernel();
+		
+		skernel=new ShopInfoKernel();
 		
 		initialize();
 		update();
@@ -150,11 +159,14 @@ public class GuestInfoUI {
 		new_order.add(lblNewLabel_1, BorderLayout.NORTH);
 		
 		JPanel new_order_center_board = new JPanel();
-		new_order.add(new_order_center_board, BorderLayout.CENTER);
+		new_order.add(new_order_center_board, BorderLayout.EAST);
 		new_order_center_board.setLayout(new GridLayout(1, 2, 0, 0));
 		
-		JPanel new_order_controlboard = new JPanel();
-		new_order_center_board.add(new_order_controlboard);
+		JPanel new_order_controlboard = new JPanel();//////////////////////////////////////////////////////JPanel
+
+		
+		
+		
 		
 		
 		
@@ -183,10 +195,11 @@ public class GuestInfoUI {
         renderer.setToolTipText("Click for combo box");///沒看到具體效果，應該是用來加提示字八
         sportColumn.setCellRenderer(renderer);///沒看到具體效果，應該是用來加提示字八
 		*/
+		new_order_controlboard.setLayout(new BorderLayout(0, 0));
 		/////----------------------------------------------------------------------------------------------------------------------------------------------------
 		
 		//what_you_want_to_order = new JTable(new MyTableModel());
-		JScrollPane what_you_want_to_order_Scroll = new JScrollPane(what_you_want_to_order);
+		JScrollPane what_you_want_to_order_Scroll = new JScrollPane(what_you_want_to_order);/////////////////////////////JTable
 		//initColumnSizes(what_you_want_to_order);///自定義函數，內容從line85開始    目的是重新設定所有格子的個欄項比例
 
         //Fiddle with the Sport column's cell editors/renderers.
@@ -195,7 +208,7 @@ public class GuestInfoUI {
 		
 		
 		
-		new_order_controlboard.add(what_you_want_to_order_Scroll);
+		new_order_controlboard.add(what_you_want_to_order_Scroll, BorderLayout.CENTER);
 		//// new order table
 
 		
@@ -220,6 +233,62 @@ public class GuestInfoUI {
 		
 		Button update_order_list = new Button("update");
 		confirm.add(update_order_list);
+		
+		JPanel input_area = new JPanel();
+		new_order.add(input_area, BorderLayout.CENTER);
+		input_area.setLayout(new BorderLayout(0, 0));
+		
+		JPanel control_button = new JPanel();
+		input_area.add(control_button, BorderLayout.SOUTH);
+		
+		JButton calculate = new JButton("calculate");
+		control_button.add(calculate);
+		
+		JPanel order_table = new JPanel();
+		input_area.add(order_table, BorderLayout.CENTER);
+		order_table.setLayout(new GridLayout(5, 1, 0, 0));
+		
+		JPanel panel_1 = new JPanel();
+		order_table.add(panel_1);
+		
+		shop_comboBox_1 = new JComboBox <String> ();
+		
+		setUpComboBoxList(shop_comboBox_1,new String []{"None"});
+    	kernel.input_all_shop_name_into_combobox(skernel,shop_comboBox_1);
+		panel_1.add(shop_comboBox_1);
+		
+		shop_comboBox_1.addItemListener(
+				new ItemListener(){
+					@Override
+					public void itemStateChanged(ItemEvent event){
+						if(event.getStateChange() == ItemEvent.SELECTED){
+					    	kernel.input_all_item_of_the_shop_name_into_combobox(shop_comboBox_1,item_comboBox_1,shop_comboBox_1.getSelectedIndex());
+						}
+					}
+					
+				}
+		);
+		item_comboBox_1 = new JComboBox <String> ();
+		setUpComboBoxList(item_comboBox_1,new String []{"None","item1","item2"});
+		panel_1.add(item_comboBox_1);
+		
+		
+		
+		money_1 = new JTextField();
+		money_1.setHorizontalAlignment(SwingConstants.RIGHT);
+		money_1.setText("0");
+		money_1.setEditable(false);
+		panel_1.add(money_1);
+		money_1.setColumns(5);
+		
+		amount_1 = new JTextField();
+		amount_1.setHorizontalAlignment(SwingConstants.RIGHT);
+		amount_1.setText("0");
+		panel_1.add(amount_1);
+		amount_1.setColumns(5);
+		
+		JCheckBox add_1 = new JCheckBox("add");
+		panel_1.add(add_1);
 		
 		JPanel pan_info = new JPanel();
 		frame.getContentPane().add(pan_info, BorderLayout.CENTER);
@@ -317,125 +386,16 @@ public class GuestInfoUI {
 					}
 				}
 		);
-		
-		
-		
-		
-		
-		
 	}
-	////////////////////////////////////////////////////////////////////////////////////////////table   initialize
-	public void setUpSportColumn(JTable table,
-        TableColumn sportColumn) {///將其中一欄格式用 combo box 表現   line74 時有用此函數
-		//Set up the editor for the sport cells.
-		JComboBox comboBox = new JComboBox();
-		comboBox.addItem("Snowboarding");
-		comboBox.addItem("Rowing");
-		comboBox.addItem("Knitting");
-		comboBox.addItem("Speed reading");
-		comboBox.addItem("Pool");
-		comboBox.addItem("None of the above");
-		sportColumn.setCellEditor(new DefaultCellEditor(comboBox));///系統內設計的改變cell型態方法  Cell的Editor!! (另一方法為自己寫一個override系統的 cell型態方法)
-
-		//Set up tool tips for the sport cells.
-		DefaultTableCellRenderer renderer = ///系統用來規定cell型態的變數
-				new DefaultTableCellRenderer();
-		renderer.setToolTipText("Click for combo box");///沒看到具體效果，應該是用來加提示字八
-		sportColumn.setCellRenderer(renderer);///沒看到具體效果，應該是用來加提示字八
-	}
-	private void initColumnSizes(JTable table) {///目的是重新設定所有格子的個欄項比例
-        MyTableModel model = (MyTableModel)table.getModel();///Jtable的 MyTableModel reference
-        TableColumn column = null;///line 96 table.getColumnModel().getColumn(i)的 reference
-        Component comp = null;
-        int headerWidth = 0;
-        int cellWidth = 0;
-        Object[] longValues = model.longValues;
-        TableCellRenderer headerRenderer =///headerRenderer reference 指向標題列的格式
-            table.getTableHeader().getDefaultRenderer();
-
-        for (int i = 0; i < 5; i++) {
-            column = table.getColumnModel().getColumn(i);
-
-            comp = headerRenderer.getTableCellRendererComponent(
-                                 null, column.getHeaderValue(),
-                                 false, false, 0, 0);
-            headerWidth = comp.getPreferredSize().width;///與 table 欄 文字數目的個數成正比 (以後用此來分配各欄 大小、比例)
-            comp = table.getDefaultRenderer(model.getColumnClass(i)).
-                             getTableCellRendererComponent(
-                                 table, longValues[i],
-                                 false, false, 0, i);
-            cellWidth = comp.getPreferredSize().width;///不知道與哪個變數正相關?????
-
-            
-
-            column.setPreferredWidth(Math.max(headerWidth, cellWidth));///設定比例
-        }
+	public void setUpComboBoxList(JComboBox<String> list,String []input){///輸入input String，得到該欄位按下combo box 所顯示的list
+    	///if(list.getComponentCount()==0){
+    	list.removeAllItems();
+    	///}
+    	for(String a : input){
+    		list.addItem(a);
+    	}
+    	
     }
-    class MyTableModel extends AbstractTableModel {///設定 table 初值內容 值實際內容!!!!
-        private String[] columnNames = {"First Name",
-                                        "Last Name",
-                                        "Sport",
-                                        "# of Years",
-                                        "Vegetarian"};
-        private Object[][] data = {
-	    {"Kathy", "Smith",
-	     "Snowboarding", new Integer(5), new Boolean(false)},
-	    {"John", "Doe",
-	     "Rowing", new Integer(3), new Boolean(true)},
-	    {"Sue", "Black",
-	     "Knitting", new Integer(2), new Boolean(false)},
-	    {"Jane", "White",
-	     "Speed reading", new Integer(20), new Boolean(true)},
-	    {"Joe", "Brown",
-	     "Pool", new Integer(10), new Boolean(false)}
-        };
-
-        public final Object[] longValues = {"Jane", "Kathy",
-                                            "None of the above",
-                                            new Integer(20), Boolean.TRUE};
-
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        public int getRowCount() {
-            return data.length;
-        }
-
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
-
-        public Object getValueAt(int row, int col) {
-            return data[row][col];
-        }
-
-        /*
-         * JTable uses this method to determine the default renderer/
-         * editor for each cell.  If we didn't implement this method,
-         * then the last column would contain text ("true"/"false"),
-         * rather than a check box.
-         */
-        public Class getColumnClass(int c) {
-            return getValueAt(0, c).getClass();
-        }
-
-        /*
-         * Don't need to implement this method unless your table's
-         * editable.
-         */
-        public boolean isCellEditable(int row, int col) {
-            //Note that the data/cell address is constant,
-            //no matter where the cell appears onscreen.
-            if (col < 2) {
-                return false;
-            } else {
-                return true;
-            }
-        }//////////////////////////////////////////////////////////////////////////////////////////////////////////table   initialize
-    }
-	
-	
 	
 	/**
 	 * Launch the application.

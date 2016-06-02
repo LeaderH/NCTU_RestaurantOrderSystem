@@ -2,6 +2,7 @@ package Kernel;
 
 import java.sql.*;
 
+import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 
 import db.MySQL;
@@ -17,6 +18,8 @@ public class GuestInfoKernel extends MySQL{
 	
 
 	private DefaultTableModel tabledata;
+	
+	int shop_uid_array[]=new int[100];
 
 	/**
 	 * initialize variables
@@ -46,6 +49,47 @@ public class GuestInfoKernel extends MySQL{
 	 * @param uid
 	 * @return success request
 	 */
+	
+	public void input_all_shop_name_into_combobox(ShopInfoKernel skernel,JComboBox <String> list){
+		
+		String selectSQL = "SELECT fullname FROM shop ";
+		try {
+			if(con==null) reconnect();//////////////////////important change!!!
+			stat = con.createStatement();
+			rs = stat.executeQuery(selectSQL);
+			
+			list.removeAll();
+			while(rs.next()) {
+				
+				list.addItem(rs.getString("fullname"));
+				
+			}
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+		
+	}
+	
+	public void input_all_item_of_the_shop_name_into_combobox(JComboBox <String>shop_list,JComboBox <String>item_list,int selectIndex){
+		String selectSQL = "SELECT fullname FROM shop ";
+		try {
+			if(con==null) reconnect();//////////////////////important change!!!
+			stat = con.createStatement();
+			rs = stat.executeQuery(selectSQL);
+			while(rs.next()) {
+				item_list.removeAll();
+				item_list.addItem(rs.getString("fullname"));
+				
+			}
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+	}
+	
 	public boolean GetInfo(int uid) {
 		boolean success=true;
 		String selectSQL = "SELECT g_id,fullname,studentid,dept,gender FROM guest "+
@@ -109,6 +153,9 @@ public class GuestInfoKernel extends MySQL{
 	}
 	
 	public void addtabledata(String A,String B,String C,String D,String E,String F){
+		for(int i=0;i<tabledata.getRowCount();i++){
+			tabledata.removeRow(0);			
+		}
 		tabledata.addRow(new Object[]{A,B,C,D,E,F});
 	}
 	public DefaultTableModel gettabledata(){
