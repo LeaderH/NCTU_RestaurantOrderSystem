@@ -253,7 +253,7 @@ public class GuestInfoUI {
 		
 		shop_comboBox_1 = new JComboBox <String> ();
 		
-		setUpComboBoxList(shop_comboBox_1,new String []{"None"});
+		//setUpComboBoxList(shop_comboBox_1,new String []{"None"});
     	kernel.input_all_shop_name_into_combobox(skernel,shop_comboBox_1);
 		panel_1.add(shop_comboBox_1);
 		

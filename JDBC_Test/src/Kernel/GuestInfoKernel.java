@@ -19,7 +19,7 @@ public class GuestInfoKernel extends MySQL{
 
 	private DefaultTableModel tabledata;
 	
-	int shop_uid_array[]=new int[100];
+	int shop_uid_array[];
 
 	/**
 	 * initialize variables
@@ -51,8 +51,14 @@ public class GuestInfoKernel extends MySQL{
 	 */
 	
 	public void input_all_shop_name_into_combobox(ShopInfoKernel skernel,JComboBox <String> list){
+		shop_uid_array=new int[100];
+		int counter = 1;
 		
-		String selectSQL = "SELECT fullname FROM shop ";
+		
+		String selectSQL = "SELECT fullname,uid FROM shop ";
+		list.addItem("NONE");
+		shop_uid_array[0]=-1;
+		
 		try {
 			if(con==null) reconnect();//////////////////////important change!!!
 			stat = con.createStatement();
@@ -60,9 +66,9 @@ public class GuestInfoKernel extends MySQL{
 			
 			list.removeAll();
 			while(rs.next()) {
-				
+				shop_uid_array[counter] = rs.getInt("uid");
 				list.addItem(rs.getString("fullname"));
-				
+				counter++;
 			}
 		} catch (SQLException e) {
 			System.out.println("SelectDB Exception :" + e.toString());
