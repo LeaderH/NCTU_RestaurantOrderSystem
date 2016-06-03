@@ -22,7 +22,7 @@ public class ShopInfoUI {
 	private static final String titleName="ShopInfo";
 	private int uid;
 	private Item[] itemList;
-	private ShopInfoKernel kernel;
+	private final ShopInfoKernel kernel=new ShopInfoKernel();;
 	private JFrame frmShopinfo;
 	private JTextField txtf_name;
 	private JTextField txtf_loc;
@@ -63,7 +63,6 @@ public class ShopInfoUI {
 	public ShopInfoUI(int uid) {
 		this.uid=uid;
 		itemList=new Item[1];
-		kernel=new ShopInfoKernel();
 		initialize();
 		update();
 	}

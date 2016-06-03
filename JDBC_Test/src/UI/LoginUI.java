@@ -118,10 +118,10 @@ public class LoginUI {
 			else if(kernel.getType()==Constants.SHOP){
 				ShopInfoUI.start(kernel.getUid());
 			}
+			frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 		}else{
 			JOptionPane.showMessageDialog(frame, "Login Falied", "Warning", JOptionPane.ERROR_MESSAGE);
 		}
-		frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 	}
 	/**
 	 * Launch the application.
