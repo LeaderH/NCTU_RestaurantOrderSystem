@@ -12,7 +12,9 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -32,13 +34,13 @@ public class RegisterUI {
 
 	private JFrame frame;
 	
-	
+	/*
 	Item it1=new Item();
 	Item it2=new Item();
 	Item it3=new Item();
 	private  Item[] items={it1,it2,it3};
 	private  Item[] item2={it1,it2};
-	
+	*/
 	
 	private static final String[] usertypes={"","Guest","Shop"};
 	private static final String ACCOUNT_CARD="0";
@@ -56,6 +58,10 @@ public class RegisterUI {
 	private JTextField txtf_fulllname;
 	private JTextField txtf_studentid;
 	private JTextField txtf_dept;
+	
+	private ButtonGroup radioGroup;
+	private JRadioButton rdbtnMale;
+	private JRadioButton rdbtnFemale;
 	/**
 	 * Launch the application.
 	 */
@@ -77,12 +83,12 @@ public class RegisterUI {
 	 */
 	public RegisterUI() {
 		
-		it1.setFullname("A");
-		it2.setFullname("B");
-		it3.setFullname("C");
+		//it1.setFullname("A");
+		//it2.setFullname("B");
+		//it3.setFullname("C");
 		initialize();
-		DefaultComboBoxModel model = new DefaultComboBoxModel( items );
-		cbx_usertype.setModel(model);
+		//DefaultComboBoxModel model = new DefaultComboBoxModel( items );
+		//cbx_usertype.setModel(model);
 	}
 
 	private void btn_acc_next_action(){
@@ -162,9 +168,8 @@ public class RegisterUI {
 		panel_usertype.add(lblUsertype);
 		
 		//cbx_usertype = new JComboBox<String>(usertypes);
-		cbx_usertype = new JComboBox<Item>();
-		
-		//cbx_usertype = new JComboBox();
+		//cbx_usertype = new JComboBox<Item>();
+		cbx_usertype = new JComboBox();
 		cbx_usertype.setMaximumRowCount(3);
 		
 		
@@ -200,6 +205,24 @@ public class RegisterUI {
 		panel_fullname.add(txtf_fulllname);
 		txtf_fulllname.setColumns(10);
 		
+		
+		JPanel panel_gender = new JPanel();
+		panel_guest.add(panel_gender);
+		
+		JLabel lblGender = new JLabel("Gender");
+		panel_gender.add(lblGender);
+		
+		
+		rdbtnMale = new JRadioButton("Male",true);
+		panel_gender.add(rdbtnMale);
+		rdbtnFemale = new JRadioButton("Female",false);
+		panel_gender.add(rdbtnFemale);
+		radioGroup=new ButtonGroup();
+		radioGroup.add(rdbtnMale);
+		radioGroup.add(rdbtnFemale);
+		
+		
+		
 		JPanel panel_studentid = new JPanel();
 		panel_guest.add(panel_studentid);
 		
@@ -219,6 +242,15 @@ public class RegisterUI {
 		txtf_dept = new JTextField();
 		panel_dept.add(txtf_dept);
 		txtf_dept.setColumns(10);
+		
+		JPanel panel_guest_sub = new JPanel();
+		panel_guest.add(panel_guest_sub);
+		
+		JButton btnPrev = new JButton("Prev");
+		panel_guest_sub.add(btnPrev);
+		
+		JButton btnSubmit = new JButton("Submit");
+		panel_guest_sub.add(btnSubmit);
 		
 		JPanel panel_shop = new JPanel();
 		panel_card.add(panel_shop, SHOP_CARD);
