@@ -3,7 +3,9 @@ package Kernel;
 import java.sql.*;
 import java.util.*;
 
+import Kernel.Constants.Item;
 import db.MySQL;
+import Md5.Md5;
 
 public class RegisterKernel extends MySQL{
 	
@@ -12,16 +14,75 @@ public class RegisterKernel extends MySQL{
 		super();
 	}
 	
-	public void createAccount(Account acc){
-		
+	public boolean accountName_Used(String name){
+		boolean flag=false;
+		String selectSQL = "SELECT uid FROM `users` "+
+				"WHERE `acc_name`='"+name+"'";
+		try {
+			if(con==null) reconnect();
+			stat = con.createStatement();
+			rs = stat.executeQuery(selectSQL);
+			if(rs.next()) {
+				flag=true;
+			}
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+		return flag;
 	}
 	
-	public void registerGuest(Guest guest){
-		
+	
+	public int createAccount(Account acc){
+		int uid=-1;
+		String insertdbSQL = "INSERT into `users`(`acc_name`, `type`, `pwd`) " + 
+			      "VALUES ('"+acc.getAcc()+"','"+acc.getType()+"','"+Md5.md5(acc.getPwd())+"')";
+		String selectSQL = "SELECT uid FROM `users` "+
+				"WHERE `acc_name`='"+acc.getAcc()+"'";
+		try {
+			if(con==null) reconnect();
+			stat = con.createStatement();
+			stat.executeUpdate(insertdbSQL);
+			rs = stat.executeQuery(selectSQL);
+			if(rs.next()) {
+				uid=rs.getInt("uid");
+			}
+		} catch (SQLException e) {
+			System.out.println("InsertDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+		return uid;
 	}
 	
-	public void registerShop(Shop shop){
-		
+	public void registerGuest(int uid,Guest guest){
+		int gender=(guest.isGender())?0:1;
+		String insertdbSQL = "INSERT into `guest`(`uid`, `fullname`, `studentid`, `dept`, `gender`) " + 
+			      "VALUES ('"+uid+"','"+guest.getFullname()+"','"+guest.getStudentid()+"','"+guest.getDept()+"','"+gender+"')";
+		try {
+			if(con==null) reconnect();
+			stat = con.createStatement();
+			stat.executeUpdate(insertdbSQL);
+		} catch (SQLException e) {
+			System.out.println("InsertDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+	}
+	
+	public void registerShop(int uid,Shop shop){
+		String insertdbSQL = "INSERT into `shop`(`uid`, `fullname`, `location`) " + 
+			      "VALUES ('"+uid+"','"+shop.getFullname()+"','"+shop.getLocation()+"')";
+		try {
+			if(con==null) reconnect();
+			stat = con.createStatement();
+			stat.executeUpdate(insertdbSQL);
+		} catch (SQLException e) {
+			System.out.println("InsertDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
 	}
 	
 	public static class Shop{

@@ -42,7 +42,8 @@ public class RegisterUI {
 	private static final String ERROR_ACCOUNT_NAME_BLANK= "Please don't leave account name blank";
 	private static final String ERROR_PASSWORD_UNMATCH= "Password unmatched";
 	private static final String ERROR_INVALID_STUDENTID= "Invalid StudentID (7 digits)";
-	private static final String regex_studentid = "^\\d{7}";
+	private static final String ERROR_ACCOUNTNAME_USED= "AccountName Used";
+	private static final String regex_studentid = "^\\d{7}$";
 	private JTextField txtf_acc;
 	private JPasswordField pwdf_1;
 	private JPasswordField pwdf_re;
@@ -70,6 +71,7 @@ public class RegisterUI {
 				try {
 					RegisterUI window = new RegisterUI();
 					window.frame.setVisible(true);
+					window.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -112,13 +114,15 @@ public class RegisterUI {
 			JOptionPane.showMessageDialog(frame, ERROR_INVALID_STUDENTID, "Error",JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		if(!create_account(Constants.GUEST)){
+		int uid=create_account(Constants.GUEST);
+		if(uid<0){ //<0 == create failed
 			return;
 		}
 		//create account
-		kernel.registerGuest(new RegisterKernel.Guest(fullname, studentid, dept, gender));
-		JOptionPane.showMessageDialog(frame, "Welcome ","Welcome",JOptionPane.INFORMATION_MESSAGE);
+		kernel.registerGuest(uid,new RegisterKernel.Guest(fullname, studentid, dept, gender));
+		JOptionPane.showMessageDialog(frame, "Welcome, Please login again","Welcome",JOptionPane.INFORMATION_MESSAGE);
 		frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+		LoginUI.main(null);
 	}
 	
 	private void btn_shop_prev_action(){
@@ -128,28 +132,35 @@ public class RegisterUI {
 	private void btn_shop_submit_action(){
 		String fullname=txtf_shop_fullname.getText();
 		String location=txtf_location.getText();
-		if(!create_account(Constants.SHOP)){
+		int uid=create_account(Constants.SHOP);
+		if(uid<0){ //<0 == create failed
 			return;
 		}
 		//create account
-		kernel.registerShop(new RegisterKernel.Shop(fullname, location));
-		JOptionPane.showMessageDialog(frame, "Welcome ","Welcome",JOptionPane.INFORMATION_MESSAGE);
+		kernel.registerShop(uid,new RegisterKernel.Shop(fullname, location));
+		JOptionPane.showMessageDialog(frame, "Welcome, Please login again","Welcome",JOptionPane.INFORMATION_MESSAGE);
 		frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+		LoginUI.main(null);
 	}
 	
-	private boolean create_account(int type){
+	private int create_account(int type){
+		int uid=-1;
 		String acc=txtf_acc.getText();
 		String pwd=new String(pwdf_1.getPassword());
 		if(acc.equals("")){
 			JOptionPane.showMessageDialog(frame, ERROR_ACCOUNT_NAME_BLANK, "Error",JOptionPane.ERROR_MESSAGE);
-			return false;
+			return uid;
 		}
 		if(!pwd.equals(new String(pwdf_re.getPassword()))){
 			JOptionPane.showMessageDialog(frame, ERROR_PASSWORD_UNMATCH, "Error",JOptionPane.ERROR_MESSAGE);
-			return false;
+			return uid;
 		}
-		kernel.createAccount(new RegisterKernel.Account(acc,pwd,type));
-		return true;
+		if(kernel.accountName_Used(acc)){
+			JOptionPane.showMessageDialog(frame, ERROR_ACCOUNTNAME_USED, "Error",JOptionPane.ERROR_MESSAGE);
+			return uid;
+		}
+		uid=kernel.createAccount(new RegisterKernel.Account(acc,pwd,type));
+		return uid;
 	}
 	
 	

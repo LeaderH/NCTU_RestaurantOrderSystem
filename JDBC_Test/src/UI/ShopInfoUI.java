@@ -89,9 +89,11 @@ public class ShopInfoUI {
 		txtf_loc.setText(kernel.getLocation());
 		itemList=kernel.getItemList();
 		ArrayList<String> arr=new ArrayList<String>();
-		for(Item I : itemList){
-			if(I.isAvailable() && I.getI_id()>=0 )
-				arr.add(String.format("%s(%d)", I.getFullname(),I.getValue()));
+		if(itemList!=null){
+			for(Item I : itemList){
+				if(I.isAvailable() && I.getI_id()>=0 )
+					arr.add(String.format("%s(%d)", I.getFullname(),I.getValue()));
+			}
 		}
 		list_item.setListData(arr.toArray(new String[1]));
 		frmShopinfo.setTitle(titleName);
@@ -111,22 +113,24 @@ public class ShopInfoUI {
 		}
 		orderList=kernel.getOrderList();
 		ArrayList<String> arr=new ArrayList<String>();
-		for(Order O : orderList){
-			if(O.getO_id()>=0){
-				switch(order_display_type){
-				default: case Constants.ORDER_DISPALY_TYPE_UNDONE:
-					if(!O.isIsdone())
+		if(orderList!=null){
+			for(Order O : orderList){
+				if(O.getO_id()>=0){
+					switch(order_display_type){
+					default: case Constants.ORDER_DISPALY_TYPE_UNDONE:
+						if(!O.isIsdone())
+							orderlistInnerFunc(O,arr);
+						break;
+					case Constants.ORDER_DISPALY_TYPE_DONE:
+						if(O.isIsdone()) 
+							orderlistInnerFunc(O,arr);
+						break;
+					case Constants.ORDER_DISPALY_TYPE_ALL:
 						orderlistInnerFunc(O,arr);
-					break;
-				case Constants.ORDER_DISPALY_TYPE_DONE:
-					if(O.isIsdone()) 
-						orderlistInnerFunc(O,arr);
-					break;
-				case Constants.ORDER_DISPALY_TYPE_ALL:
-					orderlistInnerFunc(O,arr);
-					break;
-				case Constants.ORDER_DISPALY_TYPE_NONE:
-					break;
+						break;
+					case Constants.ORDER_DISPALY_TYPE_NONE:
+						break;
+					}
 				}
 			}
 		}
@@ -665,7 +669,7 @@ public class ShopInfoUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ShopInfoUI window = new ShopInfoUI(3); //3 is just an example
+					ShopInfoUI window = new ShopInfoUI(9); //3 is just an example
 					window.frmShopinfo.setVisible(true);
 					window.frmShopinfo.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				} catch (Exception e) {
