@@ -4,7 +4,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException; 
 
 public class SingletonConnect{
-	private static final String db_name="jdbc:mysql://stevie.heliohost.org/leader_testdb1";
+	private static final String db_name="jdbc:mysql://stevie.heliohost.org/leader_projectdb";
 	private static final String db_user="leader_normal";
 	private static final String db_pwd="normal";
 	private static Connection con=null;
