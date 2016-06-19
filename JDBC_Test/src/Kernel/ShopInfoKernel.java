@@ -14,7 +14,10 @@ public class ShopInfoKernel extends MySQL{
 	private Item[] itemList;
 	private Order[] orderList;
 	
-	
+	@Override
+	public String toString(){
+		return fullname;
+	}
 
 	private void varinit(){
 		sid=-1;

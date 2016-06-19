@@ -11,9 +11,12 @@ import javax.swing.table.TableColumn;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+
 import Kernel.GuestInfoKernel;
 import Kernel.ShopInfoKernel;
 import Kernel.Constants;
+import Kernel.Constants.Item;
 
 
 
@@ -47,7 +50,8 @@ public class GuestInfoUI {
 	private JTextField money_1;
 	private JTextField amount_1;
 	
-	JComboBox <String> shop_comboBox_1;
+	JComboBox<ShopInfoKernel> shop_comboBox_1;
+	//<String> shop_comboBox_1;
 	JComboBox <String> item_comboBox_1;
 	
 	
@@ -67,6 +71,7 @@ public class GuestInfoUI {
 		update();
 	}
 	private void update(){
+		//new DefaultComboBoxModel(shoplist.toArray(new ShopInfoKernel[1]));
 		kernel.GetInfo(uid); //refresh
 		txtf_Fullname.setText(kernel.getFullname());
 		txtf_Studentid.setText(kernel.getStudentid());
@@ -251,25 +256,50 @@ public class GuestInfoUI {
 		JPanel panel_1 = new JPanel();
 		order_table.add(panel_1);
 		
-		shop_comboBox_1 = new JComboBox <String> ();
 		
-		//setUpComboBoxList(shop_comboBox_1,new String []{"None"});
-    	kernel.input_all_shop_name_into_combobox(skernel,shop_comboBox_1);
+		ArrayList<ShopInfoKernel> shoplist=new ArrayList<ShopInfoKernel>();
+		ShopInfoKernel shop1=new ShopInfoKernel();
+		shop1.GetInfo(3);
+		shoplist.add(shop1);
+		
+		shop1=new ShopInfoKernel();
+		shop1.GetInfo(4);
+		shoplist.add(shop1);
+		
+		
+		shop_comboBox_1 = new JComboBox <ShopInfoKernel> (shoplist.toArray(new ShopInfoKernel[1]));
 		panel_1.add(shop_comboBox_1);
 		
+		shoplist=new ArrayList<ShopInfoKernel>();
+		shoplist.add(shop1);
+
+		//DefaultComboBoxModel model=new DefaultComboBoxModel(shoplist.toArray(new ShopInfoKernel[1]));
+		shop_comboBox_1.setModel(new DefaultComboBoxModel(shoplist.toArray(new ShopInfoKernel[1])));
+		//shop_comboBox_1 = new JComboBox <String>();
+		//setUpComboBoxList(shop_comboBox_1,new String []{"None"});
+		/*
+    	kernel.input_all_shop_name_into_combobox(skernel,shop_comboBox_1);
+		panel_1.add(shop_comboBox_1);
+		*/
 		shop_comboBox_1.addItemListener(
 				new ItemListener(){
 					@Override
 					public void itemStateChanged(ItemEvent event){
 						if(event.getStateChange() == ItemEvent.SELECTED){
-					    	kernel.input_all_item_of_the_shop_name_into_combobox(shop_comboBox_1,item_comboBox_1,shop_comboBox_1.getSelectedIndex());
+					    	//kernel.input_all_item_of_the_shop_name_into_combobox(shop_comboBox_1,item_comboBox_1,shop_comboBox_1.getSelectedIndex());
+							ShopInfoKernel sk=(ShopInfoKernel)event.getItem();
+							
+							Item[] items=sk.getItemList();
+							for(Item i : items){
+								System.out.println(i.getFullname()+String.valueOf(i.getValue()));
+							}
 						}
 					}
 					
 				}
 		);
 		item_comboBox_1 = new JComboBox <String> ();
-		setUpComboBoxList(item_comboBox_1,new String []{"None","item1","item2"});
+		setUpComboBoxList(item_comboBox_1,new String []{"None"});
 		panel_1.add(item_comboBox_1);
 		
 		
