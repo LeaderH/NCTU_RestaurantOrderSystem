@@ -29,6 +29,11 @@ public class LoginUI {
 		//fgfgfg
 	}
 
+	private void btn_register_action(){
+		frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+		RegisterUI.main(null);
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -94,6 +99,7 @@ public class LoginUI {
 		JButton btn_Register = new JButton("Register");
 		btn_Register.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				btn_register_action();
 			}
 		});
 		btn_Register.setToolTipText("New to this? Welcome");
@@ -118,10 +124,10 @@ public class LoginUI {
 			else if(kernel.getType()==Constants.SHOP){
 				ShopInfoUI.start(kernel.getUid());
 			}
+			frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 		}else{
 			JOptionPane.showMessageDialog(frame, "Login Falied", "Warning", JOptionPane.ERROR_MESSAGE);
 		}
-		frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 	}
 	/**
 	 * Launch the application.

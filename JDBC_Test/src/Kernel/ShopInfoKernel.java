@@ -23,8 +23,8 @@ public class ShopInfoKernel extends MySQL{
 		sid=-1;
 		fullname=null;
 		location=null;
-		itemList=new Item[1];
-		orderList=new Order[1];
+		itemList=null;
+		orderList=null;
 	}
 	
 	public ShopInfoKernel(){
@@ -78,7 +78,7 @@ public class ShopInfoKernel extends MySQL{
 						);
 				L.add(I);
 			}
-			itemList=L.toArray(itemList);
+			if(!L.isEmpty()) itemList=L.toArray(new Item[1]);
 		} catch (SQLException e) {
 			System.out.println("SelectDB Exception :" + e.toString());
 		} finally {
@@ -170,7 +170,7 @@ public class ShopInfoKernel extends MySQL{
 				//		int quant,boolean isdone,Timestamp ts)
 				L.add(I);
 			}
-			orderList=L.toArray(orderList);
+			if(!L.isEmpty()) orderList=L.toArray(new Order[1]);
 		} catch (SQLException e) {
 			System.out.println("SelectDB Exception :" + e.toString());
 		} finally {
