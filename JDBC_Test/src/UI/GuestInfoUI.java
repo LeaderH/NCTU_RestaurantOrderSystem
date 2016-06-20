@@ -48,6 +48,7 @@ public class GuestInfoUI {
 	private JTable what_you_want_to_order;
 	private JTextField money_1;
 	private JTextField amount_1;
+	JCheckBox add_1;
 	
 	JComboBox<ShopInfoKernel> shop_comboBox_1;
 	//<String> shop_comboBox_1;
@@ -132,15 +133,34 @@ public class GuestInfoUI {
 			}
 		});
 		
-		the_order.add(btnGetData, BorderLayout.EAST);
+		JButton btnCancel = new JButton("Cancel");
 		
+		btnCancel.addActionListener(
+				new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e){
+						int []selected_int_array = table.getSelectedRows();
+						for(int i : selected_int_array){
+							if(((String)table.getValueAt(i, 2)).equals("Trade has not done yet!!!")){
+								//table.setValueAt(String.valueOf(i), i, 2);
+								kernel.delete_order_name_by_oid(Integer.parseInt((String) table.getValueAt(i, 0)));
+							}
+							
+						}
+						//table.getSelectedRow()
+						//table.getSelectedRows()
+					}
+				}
+		);
 		
-		///table setting
+		JPanel the_panel_for_get_data_and_canecel_button = new JPanel();
+		the_panel_for_get_data_and_canecel_button.setLayout(new GridLayout(2, 1, 0, 0));
+		the_panel_for_get_data_and_canecel_button.add(btnGetData);
+		the_panel_for_get_data_and_canecel_button.add(btnCancel);
+		the_order.add(the_panel_for_get_data_and_canecel_button, BorderLayout.EAST);
 		
-		///data = new DefaultTableModel();
-		
-		///data.addColumn("o_id ");  data.addColumn("s_id  ");  data.addColumn("isdone ");  data.addColumn("timestmp ");  data.addColumn("i_id  ");  data.addColumn("quant ");
-		//data.addRow(new Object[]{"A","B","C","D","E","F"});
+
+
 		
 		table = new JTable(kernel.gettabledata());
 		//			 TableColumn
@@ -152,7 +172,6 @@ public class GuestInfoUI {
 		the_order.add(table_scroll,BorderLayout.CENTER);
 		//table_scroll.setVisible(false);
 		///table setting
-		
 		
 		
 		JPanel new_order = new JPanel();
@@ -229,8 +248,8 @@ public class GuestInfoUI {
 								+"\niid = " + shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_1.getSelectedIndex()].getItemList()[item_comboBox_1.getSelectedIndex()].getI_id()
 								+"\nquant = " + amount_1.getText()
 						);
-						txtrTotalMoney.setText(	kernel.find_shop_name_by_sid(1) );
-						///kernel.insertOrder(g_id, s_id, i_id, quant);
+						//txtrTotalMoney.setText(	kernel.find_shop_name_by_sid(1) );
+						kernel.insertOrder(g_id, s_id, i_id, quant);
 					}
 				}
 		);
@@ -251,12 +270,24 @@ public class GuestInfoUI {
 				new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						txtrTotalMoney.setText("   <calculate result>      \r\n\n"+
-							money_1.getText()+" * "+amount_1.getText()+" = "+(Integer.parseInt(money_1.getText())*Integer.parseInt(amount_1.getText()))+'\n'+
+						txtrTotalMoney.setText("   <calculate result>      \r\n\n");
+						if(add_1.isSelected()){
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+		
+							money_1.getText()+" * "+amount_1.getText()+" = "+(Integer.parseInt(money_1.getText())*Integer.parseInt(amount_1.getText()))+'\n'
+									
+							);
+						}else{
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+"0\n");
+						}
+
 						
-							"   <total money you spend>\n"+(Integer.parseInt(money_1.getText())*Integer.parseInt(amount_1.getText()))
+						
+						
+						txtrTotalMoney.setText(txtrTotalMoney.getText()+
+							"   <total money you spend>\n"+
+							(Integer.parseInt(money_1.getText())*Integer.parseInt(amount_1.getText()))
 						);
-					
+						
 					}
 				}
 		);
@@ -340,7 +371,9 @@ public class GuestInfoUI {
 							Item item_pointer=(Item)event.getItem();
 							money_1.setText(String.valueOf(item_pointer.getValue()));
 							
-							txtrTotalMoney.setText("   <item desciption>\n\n"+item_pointer.getDescription()+"\n\n\n");
+							txtrTotalMoney.setText("   <item desciption>\n\n");
+							
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+item_pointer.getDescription()+"\n\n\n");
 						}
 					}
 				}
@@ -368,7 +401,7 @@ public class GuestInfoUI {
 		JLabel sign_of_items = new JLabel("items   ");
 		panel_1.add(sign_of_items);
 		
-		JCheckBox add_1 = new JCheckBox("add");
+		add_1 = new JCheckBox("add");
 		panel_1.add(add_1);
 		
 		JPanel pan_info = new JPanel();

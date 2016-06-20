@@ -177,6 +177,28 @@ public class GuestInfoKernel extends MySQL{
 	public DefaultTableModel gettabledata(){
 		return tabledata;
 	}
+	
+	
+	
+	public void delete_order_name_by_oid(int oid){
+		String selectSQL = "DELETE FROM `order` "+
+				"WHERE o_id='"+oid+"'";
+
+		
+		try {
+			if(con==null) reconnect();//////////////////////important change!!!
+			stat = con.createStatement();
+			stat.executeUpdate(selectSQL);
+			
+		}catch (SQLException e) {
+				System.out.println("SelectDB Exception :" + e.toString());
+			} finally {
+				Close();
+			}		
+	}
+	
+	
+	
 	public String find_item_name_by_iid(int iid){
 		String selectSQL = "SELECT fullname FROM `item` "+
 				"WHERE i_id='"+iid+"'";
@@ -239,19 +261,17 @@ public class GuestInfoKernel extends MySQL{
 		*/
 		String information_string = new String("") ;
 		
-		for(int i=0;i<tabledata.getRowCount();i++){
-			tabledata.removeRow(0);			
+		while(tabledata.getRowCount()>0){
+			tabledata.removeRow(0);;			
 		}
 		
 		try {
 			if(con==null) reconnect();//////////////////////important change!!!
 			stat = con.createStatement();
 			rs = stat.executeQuery(selectSQL);
-			int counter = 1;
 			
 			while(rs.next()) {
-//				addtabledata( ""+rs.getInt("o_id"),""+rs.getInt("s_id"),""+rs.getInt("isdone"),""+rs.getString("timestmp"),""+rs.getString("i_id"),""+rs.getString("quant"));
-				addtabledata( ""+counter,""+rs.getInt("s_id"),""+rs.getInt("isdone"),""+rs.getString("timestmp"),""+rs.getString("i_id"),""+rs.getString("quant"));
+				addtabledata( ""+rs.getInt("o_id"),""+rs.getInt("s_id"),""+rs.getInt("isdone"),""+rs.getString("timestmp"),""+rs.getString("i_id"),""+rs.getString("quant"));
 
 				///find_shop_name_by_sid(tmp_s_id);  似乎不能出現在這，會有NULL POINTER EXCEPTION
 				
@@ -282,7 +302,7 @@ public class GuestInfoKernel extends MySQL{
 				information_string = information_string + rs.getString("quant");
 				information_string += "\n";
 				
-				counter++;
+				
 				/*	
 				gid=rs.getInt("g_id");
 				fullname=rs.getString("fullname");
