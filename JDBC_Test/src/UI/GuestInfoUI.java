@@ -1,6 +1,5 @@
 package UI;
 
-import java.awt.EventQueue;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
@@ -52,8 +51,8 @@ public class GuestInfoUI {
 	
 	JComboBox<ShopInfoKernel> shop_comboBox_1;
 	//<String> shop_comboBox_1;
-	JComboBox <String> item_comboBox_1;
-	
+	JComboBox<Item> item_comboBox_1;
+	ArrayList<ShopInfoKernel> shoplist;
 	
 	/////
 	
@@ -175,31 +174,9 @@ public class GuestInfoUI {
 		
 		
 		
-		//// new order table
-		DefaultTableModel what_you_want_to_order_DefaultTableModel = new DefaultTableModel();
-		what_you_want_to_order_DefaultTableModel.addColumn("Shop Name");
-		what_you_want_to_order_DefaultTableModel.addColumn("Item Name");
-		what_you_want_to_order_DefaultTableModel.addColumn("quantum");
-		
-		what_you_want_to_order_DefaultTableModel.addRow(new Object[]{});
-		TableColumn typeColumn =table.getColumnModel().getColumn(1);
-	
 		
 		
-		JComboBox Shops =new JComboBox();
-		Shops.addItem( new String("text/html"));
-		Shops.addItem( new String("application/pdf"));
-		typeColumn.setCellEditor(new DefaultCellEditor(Shops));
-		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
-		renderer.setToolTipText("Click for combo box");
-		typeColumn.setCellRenderer(renderer);
-		/*
-		sportColumn.setCellEditor(new DefaultCellEditor(comboBox));///系統內設計的改變cell型態方法  Cell的Editor!! (另一方法為自己寫一個override系統的 cell型態方法)
-		DefaultTableCellRenderer renderer = ///系統用來規定cell型態的變數
-                new DefaultTableCellRenderer();
-        renderer.setToolTipText("Click for combo box");///沒看到具體效果，應該是用來加提示字八
-        sportColumn.setCellRenderer(renderer);///沒看到具體效果，應該是用來加提示字八
-		*/
+		
 		new_order_controlboard.setLayout(new BorderLayout(0, 0));
 		/////----------------------------------------------------------------------------------------------------------------------------------------------------
 		
@@ -226,7 +203,7 @@ public class GuestInfoUI {
 		JPanel total_money = new JPanel();
 		new_order_confirm_board.add(total_money);
 		
-		JTextArea txtrTotalMoney = new JTextArea();
+		final JTextArea txtrTotalMoney = new JTextArea();
 		txtrTotalMoney.setText("total money\r\n?????-->????$\r\n?????-->????$      \r\n?????-->????$\r\n?????-->????$\r\n\r\ntotal -->????$\r\n");
 		total_money.add(txtrTotalMoney);
 		
@@ -235,9 +212,30 @@ public class GuestInfoUI {
 		
 		Button confirm_order = new Button("confirm");
 		confirm.add(confirm_order);
+		confirm_order.addActionListener(
+				new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						
+						int g_id = kernel.getGid();
+						int s_id = shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_1.getSelectedIndex()].getItemList()[item_comboBox_1.getSelectedIndex()].getS_id();
+						int i_id = shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_1.getSelectedIndex()].getItemList()[item_comboBox_1.getSelectedIndex()].getI_id();
+						int quant= Integer.parseInt(amount_1.getText());
+						
+						txtrTotalMoney.setText(
+								"uid = "+ uid+"         "
+								+"\ngid = " + kernel.getGid()
+								+"\nsid = " + shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_1.getSelectedIndex()].getItemList()[item_comboBox_1.getSelectedIndex()].getS_id()
+								+"\niid = " + shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_1.getSelectedIndex()].getItemList()[item_comboBox_1.getSelectedIndex()].getI_id()
+								+"\nquant = " + amount_1.getText()
+						);
+						kernel.insertOrder(g_id, s_id, i_id, quant);
+					}
+				}
+		);
 		
-		Button update_order_list = new Button("update");
-		confirm.add(update_order_list);
+		//Button update_order_list = new Button("update");
+		//confirm.add(update_order_list);
 		
 		JPanel input_area = new JPanel();
 		new_order.add(input_area, BorderLayout.CENTER);
@@ -248,6 +246,20 @@ public class GuestInfoUI {
 		
 		JButton calculate = new JButton("calculate");
 		control_button.add(calculate);
+		calculate.addActionListener(
+				new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						txtrTotalMoney.setText("total money      \r\n"+
+							money_1.getText()+" * "+amount_1.getText()+" = "+(Integer.parseInt(money_1.getText())*Integer.parseInt(amount_1.getText()))+'\n'+
+						
+							"total\n"+(Integer.parseInt(money_1.getText())*Integer.parseInt(amount_1.getText()))
+						);
+					
+					}
+				}
+		);
+		
 		
 		JPanel order_table = new JPanel();
 		input_area.add(order_table, BorderLayout.CENTER);
@@ -257,30 +269,21 @@ public class GuestInfoUI {
 		order_table.add(panel_1);
 		
 		
-		ArrayList<ShopInfoKernel> shoplist=new ArrayList<ShopInfoKernel>();
+		shoplist=new ArrayList<ShopInfoKernel>();
+		kernel.input_all_shop_name_into_combobox(shoplist);;
+		/*
 		ShopInfoKernel shop1=new ShopInfoKernel();
 		shop1.GetInfo(3);
 		shoplist.add(shop1);
 		
-		shop1=new ShopInfoKernel();
-		shop1.GetInfo(4);
-		shoplist.add(shop1);
+		ShopInfoKernel shop2=new ShopInfoKernel();
+		shop2.GetInfo(4);
+		shoplist.add(shop2);*/
 		
 		
-		shop_comboBox_1 = new JComboBox <ShopInfoKernel> (shoplist.toArray(new ShopInfoKernel[1]));
+		shop_comboBox_1 = new JComboBox <ShopInfoKernel> (shoplist.toArray(new ShopInfoKernel[shoplist.size()]));//5改成shop數      ex   shoplist length
 		panel_1.add(shop_comboBox_1);
 		
-		shoplist=new ArrayList<ShopInfoKernel>();
-		shoplist.add(shop1);
-
-		//DefaultComboBoxModel model=new DefaultComboBoxModel(shoplist.toArray(new ShopInfoKernel[1]));
-		shop_comboBox_1.setModel(new DefaultComboBoxModel(shoplist.toArray(new ShopInfoKernel[1])));
-		//shop_comboBox_1 = new JComboBox <String>();
-		//setUpComboBoxList(shop_comboBox_1,new String []{"None"});
-		/*
-    	kernel.input_all_shop_name_into_combobox(skernel,shop_comboBox_1);
-		panel_1.add(shop_comboBox_1);
-		*/
 		shop_comboBox_1.addItemListener(
 				new ItemListener(){
 					@Override
@@ -290,32 +293,75 @@ public class GuestInfoUI {
 							ShopInfoKernel sk=(ShopInfoKernel)event.getItem();
 							
 							Item[] items=sk.getItemList();
+							
+//							item_comboBox_1 = new JComboBox <Item> (sk.getItemList());
+							item_comboBox_1.removeAllItems();
+
 							for(Item i : items){
 								System.out.println(i.getFullname()+String.valueOf(i.getValue()));
+								item_comboBox_1.addItem(i);
+								
 							}
+							
 						}
 					}
 					
 				}
-		);
-		item_comboBox_1 = new JComboBox <String> ();
-		setUpComboBoxList(item_comboBox_1,new String []{"None"});
+		);		
+		
+		//shoplist=new ArrayList<ShopInfoKernel>();
+		//shoplist.add(shop1);
+		//shoplist.add(shop2);
+		
+		
+		//DefaultComboBoxModel model=new DefaultComboBoxModel(shoplist.toArray(new ShopInfoKernel[1]));
+		//shop_comboBox_1.setModel(new DefaultComboBoxModel(shoplist.toArray(new ShopInfoKernel[5])));
+		//shop_comboBox_1 = new JComboBox <String>();
+		//setUpComboBoxList(shop_comboBox_1,new String []{"None"});
+		/*
+    	kernel.input_all_shop_name_into_combobox(skernel,shop_comboBox_1);
+		panel_1.add(shop_comboBox_1);
+		*/
+
+		
+		item_comboBox_1 = new JComboBox <Item> (shoplist.get(0).getItemList());
+		//setUpComboBoxList(item_comboBox_1,new String []{"None"});		
 		panel_1.add(item_comboBox_1);
 		
-		
+		item_comboBox_1.addItemListener(
+				new ItemListener(){
+					public void itemStateChanged(ItemEvent event){
+						if(event.getStateChange() == ItemEvent.SELECTED){
+					    	//kernel.input_all_item_of_the_shop_name_into_combobox(shop_comboBox_1,item_comboBox_1,shop_comboBox_1.getSelectedIndex());
+							Item item_pointer=(Item)event.getItem();
+							money_1.setText(String.valueOf(item_pointer.getValue()));
+							
+						}
+					}
+				}
+		);
+
 		
 		money_1 = new JTextField();
 		money_1.setHorizontalAlignment(SwingConstants.RIGHT);
-		money_1.setText("0");
+		money_1.setText(String.valueOf(shoplist.get(0).getItemList()[0].getValue()));
 		money_1.setEditable(false);
 		panel_1.add(money_1);
-		money_1.setColumns(5);
+		money_1.setColumns(3);
+		
+		
+		JLabel sign_of_money = new JLabel("$ per item   ");
+		panel_1.add(sign_of_money);
+		
 		
 		amount_1 = new JTextField();
 		amount_1.setHorizontalAlignment(SwingConstants.RIGHT);
 		amount_1.setText("0");
 		panel_1.add(amount_1);
-		amount_1.setColumns(5);
+		amount_1.setColumns(3);
+
+		JLabel sign_of_items = new JLabel("items   ");
+		panel_1.add(sign_of_items);
 		
 		JCheckBox add_1 = new JCheckBox("add");
 		panel_1.add(add_1);

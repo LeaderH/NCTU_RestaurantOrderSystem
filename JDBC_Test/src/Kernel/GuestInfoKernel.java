@@ -1,10 +1,12 @@
 package Kernel;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 
+import Kernel.Constants.Item;
 import db.MySQL;
 
 public class GuestInfoKernel extends MySQL{
@@ -49,26 +51,34 @@ public class GuestInfoKernel extends MySQL{
 	 * @param uid
 	 * @return success request
 	 */
-	
-	public void input_all_shop_name_into_combobox(ShopInfoKernel skernel,JComboBox <String> list){
-		shop_uid_array=new int[100];
-		int counter = 1;
+	public void insertOrder(int g_id,int s_id,int i_id,int quant){
+		String insertdbSQL = "INSERT into `order`(`g_id`,`s_id`,`i_id`,`quant`) " + 
+			      "VALUES ('"+g_id+"','"+s_id+"','"+i_id+"','"+quant+"')"; 
+		try {
+			if(con==null) reconnect();
+			stat = con.createStatement();
+			stat.executeUpdate(insertdbSQL);
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+	}
+	public void input_all_shop_name_into_combobox(ArrayList<ShopInfoKernel> shoplist){
+				
+		String selectSQL = "SELECT uid FROM shop ";
 		
-		
-		String selectSQL = "SELECT fullname,uid FROM shop ";
-		list.addItem("NONE");
-		shop_uid_array[0]=-1;
 		
 		try {
 			if(con==null) reconnect();//////////////////////important change!!!
 			stat = con.createStatement();
 			rs = stat.executeQuery(selectSQL);
-			
-			list.removeAll();
+
 			while(rs.next()) {
-				shop_uid_array[counter] = rs.getInt("uid");
-				list.addItem(rs.getString("fullname"));
-				counter++;
+				ShopInfoKernel shop1=new ShopInfoKernel();
+				shop1.GetInfo(rs.getInt("uid"));
+				shoplist.add(shop1);
+				
 			}
 		} catch (SQLException e) {
 			System.out.println("SelectDB Exception :" + e.toString());
