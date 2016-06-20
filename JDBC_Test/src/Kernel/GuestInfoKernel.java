@@ -169,13 +169,59 @@ public class GuestInfoKernel extends MySQL{
 	}
 	
 	public void addtabledata(String A,String B,String C,String D,String E,String F){
-		for(int i=0;i<tabledata.getRowCount();i++){
+		/*for(int i=0;i<tabledata.getRowCount();i++){
 			tabledata.removeRow(0);			
-		}
+		}*/
 		tabledata.addRow(new Object[]{A,B,C,D,E,F});
 	}
 	public DefaultTableModel gettabledata(){
 		return tabledata;
+	}
+	public String find_item_name_by_iid(int iid){
+		String selectSQL = "SELECT fullname FROM `item` "+
+				"WHERE i_id='"+iid+"'";
+		String information_string = new String("") ;
+		
+		try {
+			if(con==null) reconnect();//////////////////////important change!!!
+			stat = con.createStatement();
+			rs = stat.executeQuery(selectSQL);
+			while(rs.next()) {
+			
+				information_string = rs.getString("fullname");// rs.getString("fullname");
+			
+			}
+		}catch (SQLException e) {
+				System.out.println("SelectDB Exception :" + e.toString());
+			} finally {
+				Close();
+			}
+		
+		return information_string;
+		
+	}
+	
+	public String find_shop_name_by_sid(int sid){
+		String selectSQL = "SELECT fullname FROM `shop` "+
+				"WHERE s_id='"+sid+"'";
+		String information_string = new String("") ;
+		
+		try {
+			if(con==null) reconnect();//////////////////////important change!!!
+			stat = con.createStatement();
+			rs = stat.executeQuery(selectSQL);
+			while(rs.next()) {
+			
+				information_string = rs.getString("fullname");// rs.getString("fullname");
+			
+			}
+		}catch (SQLException e) {
+				System.out.println("SelectDB Exception :" + e.toString());
+			} finally {
+				Close();
+			}
+		
+		return information_string;
 	}
 	
 	public String getOrderSyntex(){
@@ -192,13 +238,22 @@ public class GuestInfoKernel extends MySQL{
 				"WHERE uid='"+uid+"'";
 		*/
 		String information_string = new String("") ;
-				
+		
+		for(int i=0;i<tabledata.getRowCount();i++){
+			tabledata.removeRow(0);			
+		}
+		
 		try {
 			if(con==null) reconnect();//////////////////////important change!!!
 			stat = con.createStatement();
 			rs = stat.executeQuery(selectSQL);
+			int counter = 1;
+			
 			while(rs.next()) {
-				addtabledata( ""+rs.getInt("o_id"),""+rs.getInt("s_id"),""+rs.getInt("isdone"),""+rs.getString("timestmp"),""+rs.getString("i_id"),""+rs.getString("quant"));
+//				addtabledata( ""+rs.getInt("o_id"),""+rs.getInt("s_id"),""+rs.getInt("isdone"),""+rs.getString("timestmp"),""+rs.getString("i_id"),""+rs.getString("quant"));
+				addtabledata( ""+counter,""+rs.getInt("s_id"),""+rs.getInt("isdone"),""+rs.getString("timestmp"),""+rs.getString("i_id"),""+rs.getString("quant"));
+
+				///find_shop_name_by_sid(tmp_s_id);  似乎不能出現在這，會有NULL POINTER EXCEPTION
 				
 				
 				information_string += " o_id = ";
@@ -226,6 +281,8 @@ public class GuestInfoKernel extends MySQL{
 				information_string += " quant = ";
 				information_string = information_string + rs.getString("quant");
 				information_string += "\n";
+				
+				counter++;
 				/*	
 				gid=rs.getInt("g_id");
 				fullname=rs.getString("fullname");
@@ -246,6 +303,23 @@ public class GuestInfoKernel extends MySQL{
 		} finally {
 			Close();
 		}
+		
+		for(int i=0;i<tabledata.getRowCount();i++){
+			int tmp_s_id = Integer.parseInt((String)tabledata.getValueAt(i,1));
+			int tmp_i_id = Integer.parseInt((String)tabledata.getValueAt(i,4));
+			String tmp = new String("");
+			tmp = find_shop_name_by_sid(tmp_s_id);
+			tabledata.setValueAt(tmp, i, 1);
+			tmp = find_item_name_by_iid(tmp_i_id);
+			tabledata.setValueAt(tmp, i, 4);
+			
+			if(Integer.parseInt((String)tabledata.getValueAt(i,2))==0){
+				tabledata.setValueAt("Trade has not done yet!!!",i,2);				
+			}else{
+				tabledata.setValueAt("Trade done!!!",i,2);
+			}
+		}
+		
 		return information_string;
 	}
 	////////////////////////////////////////////////////my change!!!!

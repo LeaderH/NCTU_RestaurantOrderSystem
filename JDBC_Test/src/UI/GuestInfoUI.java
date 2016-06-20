@@ -53,7 +53,7 @@ public class GuestInfoUI {
 	//<String> shop_comboBox_1;
 	JComboBox<Item> item_comboBox_1;
 	ArrayList<ShopInfoKernel> shoplist;
-	
+	JTextArea txtrTotalMoney;/// information text area. It can show item description , total money you might spend and some testing code
 	/////
 	
 	
@@ -120,7 +120,7 @@ public class GuestInfoUI {
 		textArea.setText("sjl;kla\n\n\n\n\n\n\n\n\n\nasdfa");
 		JScrollPane text_area_scroll = new JScrollPane(textArea);
 
-		the_order.add(text_area_scroll, BorderLayout.WEST);
+		///the_order.add(text_area_scroll, BorderLayout.WEST);
 		
 		
 		abc =  textArea;/////don forget this variable
@@ -159,7 +159,7 @@ public class GuestInfoUI {
 		JTab_for_testing.addTab("I want to order new thing", null, new_order, null);
 		new_order.setLayout(new BorderLayout(0, 0));
 		
-		JLabel lblNewLabel_1 = new JLabel("random code sjakdlfjlsdjf;askjdf;j;alskjdf;lj");
+		JLabel lblNewLabel_1 = new JLabel(" shop name               | item name           | money per item     | quant of item  | seleted?");
 		new_order.add(lblNewLabel_1, BorderLayout.NORTH);
 		
 		JPanel new_order_center_board = new JPanel();
@@ -203,7 +203,7 @@ public class GuestInfoUI {
 		JPanel total_money = new JPanel();
 		new_order_confirm_board.add(total_money);
 		
-		final JTextArea txtrTotalMoney = new JTextArea();
+		txtrTotalMoney = new JTextArea();
 		txtrTotalMoney.setText("total money\r\n?????-->????$\r\n?????-->????$      \r\n?????-->????$\r\n?????-->????$\r\n\r\ntotal -->????$\r\n");
 		total_money.add(txtrTotalMoney);
 		
@@ -229,7 +229,8 @@ public class GuestInfoUI {
 								+"\niid = " + shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_1.getSelectedIndex()].getItemList()[item_comboBox_1.getSelectedIndex()].getI_id()
 								+"\nquant = " + amount_1.getText()
 						);
-						kernel.insertOrder(g_id, s_id, i_id, quant);
+						txtrTotalMoney.setText(	kernel.find_shop_name_by_sid(1) );
+						///kernel.insertOrder(g_id, s_id, i_id, quant);
 					}
 				}
 		);
@@ -250,10 +251,10 @@ public class GuestInfoUI {
 				new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						txtrTotalMoney.setText("total money      \r\n"+
+						txtrTotalMoney.setText("   <calculate result>      \r\n\n"+
 							money_1.getText()+" * "+amount_1.getText()+" = "+(Integer.parseInt(money_1.getText())*Integer.parseInt(amount_1.getText()))+'\n'+
 						
-							"total\n"+(Integer.parseInt(money_1.getText())*Integer.parseInt(amount_1.getText()))
+							"   <total money you spend>\n"+(Integer.parseInt(money_1.getText())*Integer.parseInt(amount_1.getText()))
 						);
 					
 					}
@@ -328,6 +329,9 @@ public class GuestInfoUI {
 		//setUpComboBoxList(item_comboBox_1,new String []{"None"});		
 		panel_1.add(item_comboBox_1);
 		
+		txtrTotalMoney.setText("   <item desciption>\n\n"+shoplist.get(0).getItemList()[0].getDescription()+"\n\n\n");
+		
+		
 		item_comboBox_1.addItemListener(
 				new ItemListener(){
 					public void itemStateChanged(ItemEvent event){
@@ -336,6 +340,7 @@ public class GuestInfoUI {
 							Item item_pointer=(Item)event.getItem();
 							money_1.setText(String.valueOf(item_pointer.getValue()));
 							
+							txtrTotalMoney.setText("   <item desciption>\n\n"+item_pointer.getDescription()+"\n\n\n");
 						}
 					}
 				}
@@ -356,7 +361,7 @@ public class GuestInfoUI {
 		
 		amount_1 = new JTextField();
 		amount_1.setHorizontalAlignment(SwingConstants.RIGHT);
-		amount_1.setText("0");
+		amount_1.setText("1");
 		panel_1.add(amount_1);
 		amount_1.setColumns(3);
 
