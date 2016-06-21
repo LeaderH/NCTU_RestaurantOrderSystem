@@ -19,7 +19,7 @@ import java.awt.image.*;
 import javax.swing.border.LineBorder;
 
 public class ShopInfoUI {
-	private static final String titleName="ShopInfo";
+	private static final String titleName="Shop Manage Panel";
 	private int uid;
 	private Item[] itemList;
 	private final ShopInfoKernel kernel=new ShopInfoKernel();;

@@ -20,6 +20,7 @@ import Kernel.Constants.Item;
 
 
 public class GuestInfoUI {
+	private static final String titleName="Guest Order Panel";
 	private int uid;
 	private GuestInfoKernel kernel;
 	private JFrame frame;
@@ -103,6 +104,8 @@ public class GuestInfoUI {
 	}
 	private void update(){
 		//new DefaultComboBoxModel(shoplist.toArray(new ShopInfoKernel[1]));
+		String title=frame.getTitle()+"--loading";
+		frame.setTitle(title);
 		kernel.GetInfo(uid); //refresh
 		txtf_Fullname.setText(kernel.getFullname());
 		txtf_Studentid.setText(kernel.getStudentid());
@@ -115,12 +118,14 @@ public class GuestInfoUI {
 			rdbtnFemale.setSelected(false);
 			rdbtnMale.setSelected(true);
 		}
+		frame.setTitle(titleName);
 	}
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setTitle(titleName);
 		frame.setBounds(100, 100, 1250, 700);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
