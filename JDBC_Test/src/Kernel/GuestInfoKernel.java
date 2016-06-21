@@ -29,7 +29,7 @@ public class GuestInfoKernel extends MySQL{
 	private void varinit(){
 		///////
 		tabledata = new DefaultTableModel();
-		tabledata.addColumn("o_id ");  tabledata.addColumn("s_id  ");  tabledata.addColumn("isdone ");  tabledata.addColumn("timestmp ");  tabledata.addColumn("i_id  ");  tabledata.addColumn("quant ");
+		tabledata.addColumn("o_id ");  tabledata.addColumn("shop name  ");  tabledata.addColumn("isdone ");  tabledata.addColumn("timestmp ");  tabledata.addColumn("item name  ");  tabledata.addColumn("quant ");
 		//////table
 		
 		

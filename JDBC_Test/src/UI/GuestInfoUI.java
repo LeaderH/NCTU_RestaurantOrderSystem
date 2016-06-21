@@ -61,6 +61,25 @@ public class GuestInfoUI {
 	private JTextField amount_2;
 	JCheckBox add_2;
 	
+	
+	JComboBox<ShopInfoKernel> shop_comboBox_3;
+	JComboBox<Item> item_comboBox_3 ;
+	private JTextField money_3;
+	private JTextField amount_3;
+	JCheckBox add_3;
+	
+	JComboBox<ShopInfoKernel> shop_comboBox_4;
+	JComboBox<Item> item_comboBox_4;
+	private JTextField money_4;
+	private JTextField amount_4;
+	JCheckBox add_4;
+	
+	JComboBox<ShopInfoKernel> shop_comboBox_5;
+	JComboBox<Item> item_comboBox_5;
+	private JTextField money_5;
+	private JTextField amount_5;
+	JCheckBox add_5;
+	
 	ArrayList<ShopInfoKernel> shoplist;
 	JTextArea txtrTotalMoney;/// information text area. It can show item description , total money you might spend and some testing code
 	/////
@@ -258,20 +277,56 @@ public class GuestInfoUI {
 						);*/
 						//txtrTotalMoney.setText(	kernel.find_shop_name_by_sid(1) );
 						if(add_1.isSelected()){
+
 							kernel.insertOrder(g_id, s_id, i_id, quant);
 							txtrTotalMoney.setText(txtrTotalMoney.getText()+"order1 has been sent!!!\n");
 						}
 						
 						
-						g_id = kernel.getGid();
-						s_id = shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_2.getSelectedIndex()].getItemList()[item_comboBox_2.getSelectedIndex()].getS_id();
-						i_id = shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_2.getSelectedIndex()].getItemList()[item_comboBox_2.getSelectedIndex()].getI_id();
-						quant= Integer.parseInt(amount_2.getText());
 						
 						if(add_2.isSelected()){
+							g_id = kernel.getGid();
+							s_id = shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_2.getSelectedIndex()].getItemList()[item_comboBox_2.getSelectedIndex()].getS_id();
+							i_id = shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_2.getSelectedIndex()].getItemList()[item_comboBox_2.getSelectedIndex()].getI_id();
+							quant= Integer.parseInt(amount_2.getText());
+
 							kernel.insertOrder(g_id, s_id, i_id, quant);
 							txtrTotalMoney.setText(txtrTotalMoney.getText()+"order2 has been sent!!!\n");
 						}
+						
+						if(add_3.isSelected()){
+							g_id = kernel.getGid();
+							s_id = shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_3.getSelectedIndex()].getItemList()[item_comboBox_3.getSelectedIndex()].getS_id();
+							i_id = shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_3.getSelectedIndex()].getItemList()[item_comboBox_3.getSelectedIndex()].getI_id();
+							quant= Integer.parseInt(amount_3.getText());
+
+							kernel.insertOrder(g_id, s_id, i_id, quant);
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+"order3 has been sent!!!\n");
+						}
+						
+
+						if(add_4.isSelected()){
+							g_id = kernel.getGid();
+							s_id = shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_4.getSelectedIndex()].getItemList()[item_comboBox_4.getSelectedIndex()].getS_id();
+							i_id = shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_4.getSelectedIndex()].getItemList()[item_comboBox_4.getSelectedIndex()].getI_id();
+							quant= Integer.parseInt(amount_4.getText());
+
+							kernel.insertOrder(g_id, s_id, i_id, quant);
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+"order4 has been sent!!!\n");
+						}
+						
+						if(add_5.isSelected()){
+							g_id = kernel.getGid();
+							s_id = shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_5.getSelectedIndex()].getItemList()[item_comboBox_5.getSelectedIndex()].getS_id();
+							i_id = shoplist.toArray(new ShopInfoKernel[shoplist.size()])[shop_comboBox_5.getSelectedIndex()].getItemList()[item_comboBox_5.getSelectedIndex()].getI_id();
+							quant= Integer.parseInt(amount_5.getText());
+
+							kernel.insertOrder(g_id, s_id, i_id, quant);
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+"order5 has been sent!!!\n");
+						}
+
+
+						
 						txtrTotalMoney.setText(txtrTotalMoney.getText()+"\n\n\n");
 
 					}
@@ -312,6 +367,29 @@ public class GuestInfoUI {
 							txtrTotalMoney.setText(txtrTotalMoney.getText()+"0\n");
 						}
 						
+						if(add_3.isSelected()){
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+		
+							money_3.getText()+" * "+amount_3.getText()+" = "+(Integer.parseInt(money_3.getText())*Integer.parseInt(amount_3.getText()))+'\n'
+							);
+						}else{
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+"0\n");
+						}
+						
+						if(add_4.isSelected()){
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+		
+							money_4.getText()+" * "+amount_4.getText()+" = "+(Integer.parseInt(money_4.getText())*Integer.parseInt(amount_4.getText()))+'\n'
+							);
+						}else{
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+"0\n");
+						}
+						
+						if(add_5.isSelected()){
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+		
+							money_5.getText()+" * "+amount_5.getText()+" = "+(Integer.parseInt(money_5.getText())*Integer.parseInt(amount_5.getText()))+'\n'
+							);
+						}else{
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+"0\n");
+						}
 						
 						int total_money_spend = 0;
 						if(add_1.isSelected()){
@@ -319,6 +397,15 @@ public class GuestInfoUI {
 						}
 						if(add_2.isSelected()){
 							total_money_spend += Integer.parseInt(money_2.getText())*Integer.parseInt(amount_2.getText());
+						}
+						if(add_3.isSelected()){
+							total_money_spend += Integer.parseInt(money_3.getText())*Integer.parseInt(amount_3.getText());
+						}
+						if(add_4.isSelected()){
+							total_money_spend += Integer.parseInt(money_4.getText())*Integer.parseInt(amount_4.getText());
+						}
+						if(add_5.isSelected()){
+							total_money_spend += Integer.parseInt(money_5.getText())*Integer.parseInt(amount_5.getText());
 						}
 
 						txtrTotalMoney.setText(txtrTotalMoney.getText()+
@@ -517,10 +604,209 @@ public class GuestInfoUI {
 		
 		
 		
+		JPanel panel_3 = new JPanel();
+		order_table.add(panel_3);
+		
+
+		shop_comboBox_3 = new JComboBox <ShopInfoKernel> (shoplist.toArray(new ShopInfoKernel[shoplist.size()]));//5改成shop數      ex   shoplist length
+		panel_3.add(shop_comboBox_3);
+		
+		shop_comboBox_3.addItemListener(
+				new ItemListener(){
+					@Override
+					public void itemStateChanged(ItemEvent event){
+						if(event.getStateChange() == ItemEvent.SELECTED){
+
+							ShopInfoKernel sk=(ShopInfoKernel)event.getItem();
+							
+							Item[] items=sk.getItemList();
+							
+//							item_comboBox_1 = new JComboBox <Item> (sk.getItemList());
+							item_comboBox_3.removeAllItems();
+							for(Item i : items){
+								System.out.println(i.getFullname()+String.valueOf(i.getValue()));
+								item_comboBox_3.addItem(i);
+								
+							}
+							
+						}
+					}
+					
+				}
+		);		
+		
+
+		
+		item_comboBox_3 = new JComboBox <Item> (shoplist.get(0).getItemList());
+		//setUpComboBoxList(item_comboBox_1,new String []{"None"});		
+		panel_3.add(item_comboBox_3);
+		
+		txtrTotalMoney.setText("   <item desciption>\n\n"+shoplist.get(0).getItemList()[0].getDescription()+"\n\n\n");
+		
+		
+		item_comboBox_3.addItemListener(
+				new ItemListener(){
+					public void itemStateChanged(ItemEvent event){
+						if(event.getStateChange() == ItemEvent.SELECTED){
+					    	//kernel.input_all_item_of_the_shop_name_into_combobox(shop_comboBox_1,item_comboBox_1,shop_comboBox_1.getSelectedIndex());
+							Item item_pointer=(Item)event.getItem();
+							money_3.setText(String.valueOf(item_pointer.getValue()));
+							
+							txtrTotalMoney.setText("   <item desciption>\n\n");
+							
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+item_pointer.getDescription()+"\n\n\n");
+						}
+					}
+				}
+		);
+
+		
+		money_3 = new JTextField();
+		money_3.setHorizontalAlignment(SwingConstants.RIGHT);
+		money_3.setText(String.valueOf(shoplist.get(0).getItemList()[0].getValue()));
+		money_3.setEditable(false);
+		panel_3.add(money_3);
+		money_3.setColumns(3);
+		
+		
+		JLabel sign_of_money_3 = new JLabel("$ per item   ");
+		panel_3.add(sign_of_money_3);
+		
+		
+		amount_3 = new JTextField();
+		amount_3.setHorizontalAlignment(SwingConstants.RIGHT);
+		amount_3.setText("1");
+		panel_3.add(amount_3);
+		amount_3.setColumns(3);
+
+		JLabel sign_of_items_3 = new JLabel("items   ");
+		panel_3.add(sign_of_items_3);
+		
+		add_3 = new JCheckBox("add");
+		add_3.setSelected(true);
+		panel_3.add(add_3);
 		
 		
 		
 		
+		
+		JPanel panel_4 = new JPanel();
+		order_table.add(panel_4);
+		shop_comboBox_4 = new JComboBox <ShopInfoKernel> (shoplist.toArray(new ShopInfoKernel[shoplist.size()]));//5改成shop數      ex   shoplist length
+		panel_4.add(shop_comboBox_4);
+		shop_comboBox_4.addItemListener(
+				new ItemListener(){
+					@Override
+					public void itemStateChanged(ItemEvent event){
+						if(event.getStateChange() == ItemEvent.SELECTED){
+							ShopInfoKernel sk=(ShopInfoKernel)event.getItem();
+							Item[] items=sk.getItemList();
+//							item_comboBox_1 = new JComboBox <Item> (sk.getItemList());
+							item_comboBox_4.removeAllItems();
+							for(Item i : items){
+								System.out.println(i.getFullname()+String.valueOf(i.getValue()));
+								item_comboBox_4.addItem(i);
+							}
+						}
+					}
+				}
+		);
+		item_comboBox_4 = new JComboBox <Item> (shoplist.get(0).getItemList());
+		//setUpComboBoxList(item_comboBox_1,new String []{"None"});		
+		panel_4.add(item_comboBox_4);		
+		txtrTotalMoney.setText("   <item desciption>\n\n"+shoplist.get(0).getItemList()[0].getDescription()+"\n\n\n");
+		item_comboBox_4.addItemListener(
+				new ItemListener(){
+					public void itemStateChanged(ItemEvent event){
+						if(event.getStateChange() == ItemEvent.SELECTED){
+					    	//kernel.input_all_item_of_the_shop_name_into_combobox(shop_comboBox_1,item_comboBox_1,shop_comboBox_1.getSelectedIndex());
+							Item item_pointer=(Item)event.getItem();
+							money_4.setText(String.valueOf(item_pointer.getValue()));
+							txtrTotalMoney.setText("   <item desciption>\n\n");
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+item_pointer.getDescription()+"\n\n\n");
+						}
+					}
+				}
+		);
+		money_4 = new JTextField();
+		money_4.setHorizontalAlignment(SwingConstants.RIGHT);
+		money_4.setText(String.valueOf(shoplist.get(0).getItemList()[0].getValue()));
+		money_4.setEditable(false);
+		panel_4.add(money_4);
+		money_4.setColumns(3);
+		JLabel sign_of_money_4 = new JLabel("$ per item   ");
+		panel_4.add(sign_of_money_4);
+		amount_4 = new JTextField();
+		amount_4.setHorizontalAlignment(SwingConstants.RIGHT);
+		amount_4.setText("1");
+		panel_4.add(amount_4);
+		amount_4.setColumns(3);
+		JLabel sign_of_items_4 = new JLabel("items   ");
+		panel_4.add(sign_of_items_4);
+		add_4 = new JCheckBox("add");
+		add_4.setSelected(true);
+		panel_4.add(add_4);
+		
+
+		
+		
+		
+		JPanel panel_5 = new JPanel();
+		order_table.add(panel_5);
+		shop_comboBox_5 = new JComboBox <ShopInfoKernel> (shoplist.toArray(new ShopInfoKernel[shoplist.size()]));//5改成shop數      ex   shoplist length
+		panel_5.add(shop_comboBox_5);
+		shop_comboBox_5.addItemListener(
+				new ItemListener(){
+					@Override
+					public void itemStateChanged(ItemEvent event){
+						if(event.getStateChange() == ItemEvent.SELECTED){
+							ShopInfoKernel sk=(ShopInfoKernel)event.getItem();
+							Item[] items=sk.getItemList();
+//							item_comboBox_1 = new JComboBox <Item> (sk.getItemList());
+							item_comboBox_5.removeAllItems();
+							for(Item i : items){
+								System.out.println(i.getFullname()+String.valueOf(i.getValue()));
+								item_comboBox_5.addItem(i);
+							}
+						}
+					}
+				}
+		);
+		item_comboBox_5 = new JComboBox <Item> (shoplist.get(0).getItemList());
+		//setUpComboBoxList(item_comboBox_1,new String []{"None"});		
+		panel_5.add(item_comboBox_5);		
+		txtrTotalMoney.setText("   <item desciption>\n\n"+shoplist.get(0).getItemList()[0].getDescription()+"\n\n\n");
+		item_comboBox_5.addItemListener(
+				new ItemListener(){
+					public void itemStateChanged(ItemEvent event){
+						if(event.getStateChange() == ItemEvent.SELECTED){
+					    	//kernel.input_all_item_of_the_shop_name_into_combobox(shop_comboBox_1,item_comboBox_1,shop_comboBox_1.getSelectedIndex());
+							Item item_pointer=(Item)event.getItem();
+							money_5.setText(String.valueOf(item_pointer.getValue()));
+							txtrTotalMoney.setText("   <item desciption>\n\n");
+							txtrTotalMoney.setText(txtrTotalMoney.getText()+item_pointer.getDescription()+"\n\n\n");
+						}
+					}
+				}
+		);
+		money_5 = new JTextField();
+		money_5.setHorizontalAlignment(SwingConstants.RIGHT);
+		money_5.setText(String.valueOf(shoplist.get(0).getItemList()[0].getValue()));
+		money_5.setEditable(false);
+		panel_5.add(money_5);
+		money_5.setColumns(3);
+		JLabel sign_of_money_5 = new JLabel("$ per item   ");
+		panel_5.add(sign_of_money_5);
+		amount_5 = new JTextField();
+		amount_5.setHorizontalAlignment(SwingConstants.RIGHT);
+		amount_5.setText("1");
+		panel_5.add(amount_5);
+		amount_5.setColumns(3);
+		JLabel sign_of_items_5 = new JLabel("items   ");
+		panel_5.add(sign_of_items_5);
+		add_5 = new JCheckBox("add");
+		add_5.setSelected(true);
+		panel_5.add(add_5);
 		
 		
 		
