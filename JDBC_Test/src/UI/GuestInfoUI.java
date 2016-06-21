@@ -84,6 +84,10 @@ public class GuestInfoUI {
 	JTextArea txtrTotalMoney;/// information text area. It can show item description , total money you might spend and some testing code
 	/////
 	
+	private void btn_logout_action(){
+		frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+		LoginUI.main(new String[0]);
+	}
 	
 	/**
 	 * Create the application.
@@ -120,11 +124,48 @@ public class GuestInfoUI {
 		frame.setBounds(100, 100, 1250, 700);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		JPanel panel_title = new JPanel();
+		frame.getContentPane().add(panel_title, BorderLayout.NORTH);
+		panel_title.setLayout(new BorderLayout(0, 0));
+		
 		lbl_title = new JLabel("Welcome!");
+		panel_title.add(lbl_title);
 		lbl_title.setFont(new Font("Calibri", Font.BOLD, 24));
 		lbl_title.setHorizontalAlignment(SwingConstants.CENTER);
-		frame.getContentPane().add(lbl_title, BorderLayout.NORTH);
 		
+		JPanel panel_refreshbtn = new JPanel();
+		panel_title.add(panel_refreshbtn, BorderLayout.EAST);
+		
+		JButton btn_refresh = new JButton(new ImageIcon(
+				(new ImageIcon(
+						ShopInfoUI.class.getResource("/image/refresh-icon.png")
+						).getImage()
+				).getScaledInstance(45, 40, java.awt.Image.SCALE_SMOOTH)
+			)
+		);
+		btn_refresh.setToolTipText("Refresh");
+		btn_refresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				update();
+			}
+		});
+		panel_refreshbtn.add(btn_refresh);
+		btn_refresh.setPreferredSize(new Dimension(30, 30));
+		JButton btn_Logout = new JButton(new ImageIcon(
+				(new ImageIcon(
+						ShopInfoUI.class.getResource("/image/logout-icon.png")
+						).getImage()
+				).getScaledInstance(30, 25, java.awt.Image.SCALE_SMOOTH)
+			)
+		);
+		btn_Logout.setToolTipText("Logout");
+		btn_Logout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_logout_action();
+			}
+		});
+		panel_refreshbtn.add(btn_Logout);
+		btn_Logout.setPreferredSize(new Dimension(30, 30));
 		JPanel panel_for_testing = new JPanel();
 		frame.getContentPane().add(panel_for_testing, BorderLayout.WEST);
 		
@@ -432,8 +473,9 @@ public class GuestInfoUI {
 		JPanel panel_1 = new JPanel();
 		order_table.add(panel_1);
 		
-			
+		
 		shop_comboBox_1 = new JComboBox <ShopInfoKernel> (shoplist.toArray(new ShopInfoKernel[shoplist.size()]));//5改成shop數      ex   shoplist length
+		//shop_comboBox_1 = new JComboBox ();
 		panel_1.add(shop_comboBox_1);
 		
 		shop_comboBox_1.addItemListener(
@@ -464,6 +506,8 @@ public class GuestInfoUI {
 
 		
 		item_comboBox_1 = new JComboBox <Item> (shoplist.get(0).getItemList());
+		//item_comboBox_1 = new JComboBox();
+		
 		//setUpComboBoxList(item_comboBox_1,new String []{"None"});		
 		panel_1.add(item_comboBox_1);
 		
@@ -521,6 +565,8 @@ public class GuestInfoUI {
 		
 
 		shop_comboBox_2 = new JComboBox <ShopInfoKernel> (shoplist.toArray(new ShopInfoKernel[shoplist.size()]));//5改成shop數      ex   shoplist length
+		//shop_comboBox_2 = new JComboBox();
+		
 		panel_2.add(shop_comboBox_2);
 		
 		shop_comboBox_2.addItemListener(
@@ -550,6 +596,8 @@ public class GuestInfoUI {
 
 		
 		item_comboBox_2 = new JComboBox <Item> (shoplist.get(0).getItemList());
+		//item_comboBox_2 = new JComboBox();
+		
 		//setUpComboBoxList(item_comboBox_1,new String []{"None"});		
 		panel_2.add(item_comboBox_2);
 		
