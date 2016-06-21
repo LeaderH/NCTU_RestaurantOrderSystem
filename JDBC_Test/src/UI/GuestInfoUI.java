@@ -151,7 +151,7 @@ public class GuestInfoUI {
 		btn_refresh.setToolTipText("Refresh");
 		btn_refresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				update();
+				kernel.getOrderSyntex();
 			}
 		});
 		panel_refreshbtn.add(btn_refresh);
