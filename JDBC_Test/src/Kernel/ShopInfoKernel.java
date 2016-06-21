@@ -59,6 +59,22 @@ public class ShopInfoKernel extends MySQL{
 		return success;
 	}
 	
+	public void updateInfo(String fullname,String location){
+		String selectSQL = "UPDATE shop "+
+				"SET fullname='"+fullname+"'"+
+				", location='"+location+"'"+
+				" WHERE s_id="+sid+"";
+		try {
+			if(con==null) reconnect();
+			stat = con.createStatement();
+			stat.executeUpdate(selectSQL);
+		} catch (SQLException e) {
+			System.out.println("SelectDB Exception :" + e.toString());
+		} finally {
+			Close();
+		}
+	}
+	
 	private void FetchItemList(){
 		String selectSQL = "SELECT i_id,fullname,value,description,available FROM item "+
 				"WHERE s_id='"+sid+"'";

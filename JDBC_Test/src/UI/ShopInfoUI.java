@@ -26,6 +26,9 @@ public class ShopInfoUI {
 	private JFrame frmShopinfo;
 	private JTextField txtf_name;
 	private JTextField txtf_loc;
+	private JButton btn_editinfo;
+	private JButton btn_doneinfo;
+	private JButton btn_cancelinfo;
 	private JList<String>	list_item;
 	private JTextField txtf_item_name;
 	private JTextField txtf_item_value;
@@ -280,6 +283,33 @@ public class ShopInfoUI {
 		LoginUI.main(new String[0]);
 	}
 	
+	private void btn_info_edit_action(){
+		txtf_name.setEditable(true);
+		txtf_loc.setEditable(true);
+		btn_doneinfo.setVisible(true);
+		btn_cancelinfo.setVisible(true);
+		btn_editinfo.setVisible(false);
+	}
+	private void btn_info_done_action(){
+		kernel.updateInfo(txtf_name.getText(), txtf_loc.getText());
+		txtf_name.setEditable(false);
+		txtf_loc.setEditable(false);
+		btn_doneinfo.setVisible(false);
+		btn_cancelinfo.setVisible(false);
+		btn_editinfo.setVisible(true);
+		kernel.GetInfo(uid); //refresh
+	}
+	private void btn_info_cancel_action(){
+		txtf_name.setText(kernel.getFullname());
+		txtf_name.setEditable(false);
+		txtf_loc.setText(kernel.getLocation());
+		txtf_loc.setEditable(false);
+		btn_doneinfo.setVisible(false);
+		btn_cancelinfo.setVisible(false);
+		btn_editinfo.setVisible(true);
+	}
+	
+	
 	private void initialize() {
 		frmShopinfo = new JFrame();
 		frmShopinfo.setTitle(titleName);
@@ -351,13 +381,14 @@ public class ShopInfoUI {
 		panel_info.add(panel_detail, BorderLayout.CENTER);
 		GridBagLayout gbl_panel_detail = new GridBagLayout();
 		gbl_panel_detail.columnWidths = new int[] { frmShopinfo.getWidth(), 0 };
-		gbl_panel_detail.rowHeights = new int[] { 35, 35, 0 };
-		gbl_panel_detail.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
-		gbl_panel_detail.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panel_detail.rowHeights = new int[] { 35, 35, 0, 0 };
+		gbl_panel_detail.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+		gbl_panel_detail.rowWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
 		panel_detail.setLayout(gbl_panel_detail);
 
 		JPanel panel_name = new JPanel();
 		GridBagConstraints gbc_panel_name = new GridBagConstraints();
+		gbc_panel_name.insets = new Insets(0, 0, 5, 0);
 		gbc_panel_name.fill = GridBagConstraints.BOTH;
 		gbc_panel_name.gridx = 0;
 		gbc_panel_name.gridy = 0;
@@ -373,6 +404,7 @@ public class ShopInfoUI {
 
 		JPanel panel_location = new JPanel();
 		GridBagConstraints gbc_panel_location = new GridBagConstraints();
+		gbc_panel_location.insets = new Insets(0, 0, 5, 0);
 		gbc_panel_location.fill = GridBagConstraints.BOTH;
 		gbc_panel_location.gridx = 0;
 		gbc_panel_location.gridy = 1;
@@ -385,6 +417,35 @@ public class ShopInfoUI {
 		txtf_loc.setEditable(false);
 		panel_location.add(txtf_loc);
 		txtf_loc.setColumns(10);
+		
+		JPanel panel_infoedit = new JPanel();
+		panel_info.add(panel_infoedit, BorderLayout.SOUTH);
+		
+		btn_editinfo = new JButton("Edit");
+		btn_editinfo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_info_edit_action();
+			}
+		});
+		panel_infoedit.add(btn_editinfo);
+		
+		btn_doneinfo = new JButton("Done");
+		btn_doneinfo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_info_done_action();
+			}
+		});
+		btn_doneinfo.setVisible(false);
+		panel_infoedit.add(btn_doneinfo);
+		
+		btn_cancelinfo = new JButton("Cancel");
+		btn_cancelinfo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btn_info_cancel_action();
+			}
+		});
+		btn_cancelinfo.setVisible(false);
+		panel_infoedit.add(btn_cancelinfo);
 	//end tab info
 		
 	//tab item
@@ -669,7 +730,7 @@ public class ShopInfoUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ShopInfoUI window = new ShopInfoUI(9); //3 is just an example
+					ShopInfoUI window = new ShopInfoUI(3); //3 is just an example
 					window.frmShopinfo.setVisible(true);
 					window.frmShopinfo.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				} catch (Exception e) {
